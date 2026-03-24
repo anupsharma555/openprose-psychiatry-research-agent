@@ -38,11 +38,11 @@ The main prose-research agent is responsible for run creation, deterministic lit
 
 ### Planner Sub-Agent
 
-The planner sub-agent analyzes the current topic, coverage profile, controller state, and run memory to generate multiple competing retrieval strategies. These strategies are represented as bounded query-family proposals rather than direct modifications to the active run.
+The planner sub-agent analyzes the current topic, coverage profile, controller state, and run memory to generate multiple competing retrieval strategies. These strategies are expressed as bounded query-family proposals rather than direct modifications to the active run.
 
 ### Controller and Evaluation Layer
 
-All planner proposals are evaluated through deterministic shadow branches. The system can reject all proposals, select a single family, or construct a hybrid family merge. Only strategies that survive this evaluation path are materialized into downstream artifacts.
+All planner proposals are evaluated through deterministic shadow branches. The system can reject all proposals, select a single family, or construct a hybrid family merge, and only selected strategies are materialized downstream.
 
 ## Retrieval Model
 
@@ -147,6 +147,8 @@ This structure allows a run to be audited stage by stage and supports reproducib
 - `prose_pubmed_normalize_rank.py`: ranking and normalization
 - `prose_pubmed_fulltext_resolver.py`: full-text resolution across PMC, publisher, and open-access routes
 - `prose_pubmed_fulltext_extract.py`: structural extraction from resolved content
+- `prose_html_audit.py`: inspection of weak or low-substance HTML outputs
+- `prose_html_probe.py`: targeted HTML diagnostics for resolver and extraction review
 - `prose_resolved_reclassify.py`: reclassification of weak full-text signals
 - `prose_extracted_backfill.py`: abstract and metadata backfill
 - `prose_evidence_extract.py`: evidence object construction
@@ -161,9 +163,9 @@ This structure allows a run to be audited stage by stage and supports reproducib
 - `prose_planner_candidate_digest.py`: compressed candidate context for the planner
 - `prose_planner_runtime_input.py`: planner runtime state assembly from topic, controller, coverage, and memory
 - `prose_planner_agent.py`: LLM-based planner sub-agent for competing query-family generation
-- `prose_planner_shadow_eval.py`: deterministic evaluation of a single planner branch
-- `prose_planner_family_eval.py`: family comparison, selection, and hybrid merge logic
-- `prose_planner_wrapper.py`: wrapper over digest creation, runtime-input generation, planner execution, and family evaluation
+- `prose_planner_wrapper.py`: primary planner entrypoint coordinating digest creation, runtime-input generation, planner execution, and family evaluation
+- `prose_planner_family_eval.py`: primary family-level evaluation, selection, and hybrid merge logic for the active planner flow
+- `prose_planner_shadow_eval.py`: lower-level deterministic evaluation of a single planner branch used within the broader family-evaluation path
 
 ### Runtime Outputs
 
@@ -214,7 +216,7 @@ OpenClaw serves as the chat and delivery interface for the workflow. It can be u
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.10+, tested on Python 3.12
 - `openai` Python package
 - network access for PubMed, PMC, publisher endpoints, and model APIs
 - a PubMed / NCBI API key for continued operational use of the retrieval pipeline
