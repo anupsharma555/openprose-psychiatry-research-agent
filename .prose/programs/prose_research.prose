@@ -1,0 +1,63 @@
+# Prose Research Agent - Run Program
+# Run ID: 20260320-1146-000001
+#
+# This file is the orchestration manifest for the prose research workflow.
+# It is intentionally kept lightweight for now.
+#
+# OpenProse is the orchestration layer for multi-agent workflows, while the
+# actual data-plane execution in this workspace currently lives in deterministic
+# Python scripts and bounded sub-agent wrappers.
+#
+# Topic
+input topic: "TMS for depression"
+
+# Parent workflow identity
+input parent_agent: "prose_research_agent"
+input workflow_name: "prose_research"
+input mode: "filesystem"
+
+# Current lane set
+input lanes: [
+  "core_evidence",
+  "recent_peer_reviewed",
+  "frontier"
+]
+
+# Current architecture
+# Deterministic data plane:
+# - prose_pubmed_search_worker.py
+# - prose_pubmed_normalize_rank.py
+# - prose_pubmed_fulltext_resolver.py
+# - prose_pubmed_fulltext_extract.py
+# - prose_evidence_extract.py
+# - prose_coverage_review.py
+# - prose_controller.py
+# - prose_retry_runner.py
+# - prose_run_memory.py
+# - prose_run_finalizer.py
+#
+# Planner sub-agent support:
+# - prose_planner_candidate_digest.py
+# - prose_planner_runtime_input.py
+# - prose_planner_agent.py
+# - prose_planner_shadow_eval.py
+# - prose_planner_wrapper.py
+
+# Planner sub-agent
+agent planner_agent:
+  model: opus
+  prompt: "You are the planner sub-agent. You propose one bounded retrieval patch only."
+
+# Intended orchestration logic
+# 1. Run deterministic baseline research pipeline.
+# 2. Build planner candidate digest.
+# 3. Build planner runtime input.
+# 4. Run planner sub-agent in shadow mode.
+# 5. Run deterministic shadow evaluation.
+# 6. Let controller decide whether to reject, save for future run memory, or promote later.
+# 7. Finalize run and persist memory.
+
+# Notes
+# - This program file currently acts as a run manifest and orchestration stub.
+# - The active executable orchestration remains in the Python wrappers.
+# - Future versions may move more of the control flow into native OpenProse blocks.

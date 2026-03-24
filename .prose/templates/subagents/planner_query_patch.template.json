@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "template": true,
+  "artifact_type": "subagent_patch",
+  "stage": "planner_subagent",
+  "subagent_id": "planner_agent",
+  "subagent_role": "query_planner",
+  "parent_agent": "prose_research_agent",
+  "mode": "shadow",
+  "scope": "current_run",
+  "subagent_runtime": {
+    "model_slot": "planner_subagent_model",
+    "resolved_model": null,
+    "resolved_alias": null,
+    "filled_by_runtime": true,
+    "notes": "Optional provenance only. Controller should not rely on these fields."
+  },
+  "openprose_context": {
+    "program_file": null,
+    "run_dir": null,
+    "bindings_dir": null,
+    "integration_mode": "openprose_subagent_artifact",
+    "controller_contract": "bounded_patch_proposal"
+  },
+  "based_on": {
+    "orchestration_plan": null,
+    "coverage_report": null,
+    "controller_decision": null,
+    "run_memory": null
+  },
+  "problem_summary": {
+    "missing_angles": [],
+    "short_note": null
+  },
+  "proposal": {
+    "action_family": null,
+    "query_changes": {
+      "append_terms": [],
+      "append_phrases": [],
+      "remove_terms": [],
+      "remove_phrases": [],
+      "preserve_existing_terms": true
+    },
+    "search_overrides": {
+      "mode": null,
+      "journal_set": null,
+      "max_results_multiplier": null,
+      "per_query_multiplier": null
+    },
+    "rank_overrides": {
+      "journal_priority": null,
+      "max_per_journal": null
+    }
+  },
+  "evaluation_plan": {
+    "branch_type": "cheap_eval",
+    "stop_after_stage": "fulltext_resolve",
+    "compare_against": null,
+    "success_metrics": {
+      "target_deltas": {
+        "primary_study_like_count": null,
+        "semantic_ready_count": null
+      },
+      "must_not_decrease": [
+        "fulltext_yield_rate"
+      ],
+      "guardrails": {
+        "min_fulltext_yield_rate": 0.8,
+        "max_review_to_primary_ratio": 3.0
+      }
+    }
+  },
+  "confidence": null,
+  "planner_note": null
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "spec_type": "controller_acceptance_spec",
+  "target_artifact_type": "subagent_patch_bundle",
+  "target_stage": "planner_subagent",
+  "target_subagent_id": "planner_agent",
+  "target_subagent_role": "query_planner",
+  "controller_contract": "bounded_patch_bundle_proposal",
+  "policy_version": "v1.1",
+  "max_candidate_queries": 4,
+  "allowed_action_families": [
+    "boost_primary_study_queries",
+    "broaden_query_or_raise_top_k",
+    "prefer_accessible_records"
+  ],
+  "allowed_search_modes": [
+    "hybrid",
+    "accessible"
+  ],
+  "allowed_journal_sets": [
+    "tier1",
+    "tier2",
+    "tier1_tier2",
+    "off"
+  ],
+  "allowed_rank_journal_priority": [
+    "default",
+    "strict"
+  ],
+  "limits": {
+    "max_append_terms": 8,
+    "max_append_phrases": 4,
+    "max_remove_terms": 4,
+    "max_remove_phrases": 2,
+    "max_results_multiplier_min": 1.0,
+    "max_results_multiplier_max": 1.5,
+    "per_query_multiplier_min": 1.0,
+    "per_query_multiplier_max": 1.5,
+    "max_per_journal_min": 1,
+    "max_per_journal_max": 2
+  },
+  "hybrid_policy": {
+    "allow_hybrid_family_merge": true,
+    "per_family_rank_quota": 4,
+    "prefer_hybrid_if_primary_count_strictly_better": true,
+    "require_hybrid_tier1_not_below_baseline": true,
+    "require_hybrid_yield_not_below_guardrail": true,
+    "max_fulltext_yield_drop_from_baseline": 0.1,
+    "max_tier1_count_drop_from_baseline": 3
+  },
+  "notes": {
+    "planner_should_propose_2_to_4_candidate_families": true,
+    "planner_should_use_concept_groups": true,
+    "planner_should_anchor_multiword_phrases": true,
+    "planner_should_use_query_rules_from_runtime_input": true
+  }
+}

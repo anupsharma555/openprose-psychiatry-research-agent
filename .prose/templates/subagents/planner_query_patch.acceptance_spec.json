@@ -1,0 +1,182 @@
+{
+  "schema_version": "1.0",
+  "spec_type": "controller_acceptance_spec",
+  "target_artifact_type": "subagent_patch",
+  "target_stage": "planner_subagent",
+  "target_subagent_id": "planner_agent",
+  "target_subagent_role": "query_planner",
+  "controller_contract": "bounded_patch_proposal",
+  "policy_version": "v1",
+  "required_fields": [
+    "schema_version",
+    "artifact_type",
+    "stage",
+    "subagent_id",
+    "subagent_role",
+    "parent_agent",
+    "mode",
+    "scope",
+    "openprose_context",
+    "based_on",
+    "problem_summary",
+    "proposal",
+    "evaluation_plan",
+    "confidence"
+  ],
+  "required_based_on_fields": [
+    "orchestration_plan",
+    "coverage_report",
+    "controller_decision",
+    "run_memory",
+    "ranked_candidate_digest"
+  ],
+  "allowed_values": {
+    "artifact_type": [
+      "subagent_patch"
+    ],
+    "stage": [
+      "planner_subagent"
+    ],
+    "subagent_id": [
+      "planner_agent"
+    ],
+    "subagent_role": [
+      "query_planner"
+    ],
+    "parent_agent": [
+      "prose_research_agent"
+    ],
+    "mode": [
+      "shadow"
+    ],
+    "scope": [
+      "current_run"
+    ],
+    "proposal.action_family": [
+      "boost_primary_study_queries",
+      "broaden_query_or_raise_top_k",
+      "prefer_accessible_records"
+    ],
+    "proposal.search_overrides.mode": [
+      null,
+      "hybrid",
+      "accessible"
+    ],
+    "proposal.search_overrides.journal_set": [
+      null,
+      "tier1",
+      "off",
+      "tier1_tier2"
+    ],
+    "proposal.rank_overrides.journal_priority": [
+      null,
+      "default",
+      "strict"
+    ],
+    "evaluation_plan.branch_type": [
+      "cheap_eval"
+    ],
+    "evaluation_plan.stop_after_stage": [
+      "fulltext_resolve"
+    ],
+    "confidence": [
+      "low",
+      "medium",
+      "high"
+    ]
+  },
+  "limits": {
+    "max_append_terms": 8,
+    "max_append_phrases": 4,
+    "max_remove_terms": 4,
+    "max_remove_phrases": 2,
+    "max_results_multiplier_min": 1.0,
+    "max_results_multiplier_max": 1.5,
+    "per_query_multiplier_min": 1.0,
+    "per_query_multiplier_max": 1.5,
+    "max_per_journal_min": 1,
+    "max_per_journal_max": 2
+  },
+  "default_guardrails": {
+    "min_fulltext_yield_rate": 0.8,
+    "max_review_to_primary_ratio": 3.0,
+    "max_fulltext_yield_drop_from_baseline": 0.1,
+    "min_tier1_count_delta": 0,
+    "max_tier1_count_drop_from_baseline": 3
+  },
+  "metric_definitions": {
+    "ranked_primary_candidate_count": "Count in ranked kept_records where article_type is primary-study-like and not explicitly review-like.",
+    "review_pressure": "review_like_count divided by max(primary_candidate_count, 1).",
+    "tier1_count": "Count in ranked kept_records with journal_tier equal to tier_1.",
+    "fulltext_yield_rate": "analysis_ready_count divided by processed_count from resolved_records.",
+    "resolved_count": "resolved_count from fulltext_resolve output."
+  },
+  "primary_candidate_article_types": [
+    "randomized_trial",
+    "cohort_study",
+    "cross_sectional",
+    "case_control",
+    "diagnostic_ml",
+    "open_label_trial"
+  ],
+  "review_like_article_types": [
+    "systematic_review",
+    "meta_analysis",
+    "scoping_review",
+    "narrative_review",
+    "review",
+    "guideline",
+    "mechanism_review"
+  ],
+  "controller_decision_logic": {
+    "reject_if": [
+      "required_fields_missing",
+      "based_on_fields_missing",
+      "unsupported_action_family",
+      "mode_not_shadow",
+      "scope_not_current_run",
+      "append_terms_exceed_limit",
+      "append_phrases_exceed_limit",
+      "search_override_out_of_bounds",
+      "rank_override_out_of_bounds"
+    ],
+    "shadow_eval_only_if": [
+      "controller_current_decision_allows_retry_or_shadow_test",
+      "planner_confidence_is_medium_or_high",
+      "proposal.action_family_in_allowlist"
+    ],
+    "promote_to_current_run_patch_if": [
+      "ranked_primary_candidate_count_delta >= evaluation_plan.success_metrics.target_deltas.primary_study_like_count",
+      "fulltext_yield_rate_branch >= max(default_guardrails.min_fulltext_yield_rate, baseline_fulltext_yield_rate - default_guardrails.max_fulltext_yield_drop_from_baseline)",
+      "review_pressure_branch <= baseline_review_pressure",
+      "tier1_count_branch >= baseline_tier1_count + default_guardrails.min_tier1_count_delta"
+    ],
+    "save_for_future_run_memory_if": [
+      "shadow_branch_is_promising_but_current_run_retry_budget_is_exhausted",
+      "proposal.action_family_is_generalizable",
+      "branch_improves_primary_candidate_mix_without_clear_current_run_priority"
+    ],
+    "reject_after_shadow_eval_if": [
+      "ranked_primary_candidate_count_delta < 1",
+      "fulltext_yield_rate_branch < max(default_guardrails.min_fulltext_yield_rate, baseline_fulltext_yield_rate - default_guardrails.max_fulltext_yield_drop_from_baseline)",
+      "review_pressure_branch > baseline_review_pressure",
+      "tier1_count_branch < baseline_tier1_count"
+    ]
+  },
+  "controller_outcomes": [
+    "reject_invalid",
+    "accept_shadow_eval_only",
+    "promote_to_current_run_patch",
+    "save_for_future_run_memory"
+  ],
+  "notes": {
+    "runtime_model_metadata_optional": true,
+    "controller_should_ignore_model_identity_for_acceptance": true,
+    "v1_scope": "single-purpose planner proposals only, no code changes, no extraction-rule changes, no summarization changes",
+    "planner_digest_expected": true,
+    "planner_may_use_abstract_salience": true,
+    "planner_may_use_noise_signals": true,
+    "planner_may_use_recency_signals": true,
+    "controller_should_still_require_single_problem_focus": true
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.0",
+  "template": true,
+  "artifact_type": "subagent_runtime_input",
+  "stage": "planner_subagent_runtime_input",
+  "subagent_id": "planner_agent",
+  "subagent_role": "query_planner",
+  "parent_agent": "prose_research_agent",
+  "run_id": null,
+  "lane": null,
+  "topic": null,
+  "generated_at": null,
+  "mode": "shadow",
+  "scope": "current_run",
+  "openprose_context": {
+    "program_file": null,
+    "run_dir": null,
+    "bindings_dir": null,
+    "artifacts_dir": null,
+    "integration_mode": "openprose_subagent_runtime_input",
+    "controller_contract": "bounded_patch_proposal"
+  },
+  "current_controller_state": {
+    "decision": null,
+    "priority": null,
+    "can_retry": null,
+    "attempt_number": null,
+    "max_additional_passes": null,
+    "patch_scope": null,
+    "patch_ttl": null
+  },
+  "current_coverage_summary": {
+    "semantic_ready_count": null,
+    "review_like_count": null,
+    "primary_study_like_count": null,
+    "mixed_or_unclear_count": null,
+    "high_quality_record_count": null,
+    "records_with_metrics": null,
+    "fulltext_yield_rate": null,
+    "review_to_primary_ratio": null,
+    "missing_angles": [],
+    "short_note": null
+  },
+  "recent_memory_summary": {
+    "run_count": null,
+    "decision_counts": {},
+    "missing_angle_counts": {},
+    "future_patch_counts": {},
+    "promotion_watchlist": [],
+    "recent_notes": []
+  },
+  "artifact_paths": {
+    "orchestration_plan": null,
+    "coverage_report": null,
+    "controller_decision": null,
+    "run_memory": null,
+    "acceptance_spec": ".prose/templates/subagents/planner_query_patch.acceptance_spec.json",
+    "planner_patch_template": ".prose/templates/subagents/planner_query_patch.template.json",
+    "ranked_candidate_digest": null
+  },
+  "acceptance_constraints": {
+    "allowed_action_families": [
+      "boost_primary_study_queries",
+      "broaden_query_or_raise_top_k",
+      "prefer_accessible_records"
+    ],
+    "mode": "shadow",
+    "scope": "current_run",
+    "max_append_terms": 8,
+    "max_append_phrases": 4,
+    "allow_remove_terms": true,
+    "allow_remove_phrases": true,
+    "allowed_search_modes": [
+      "hybrid",
+      "accessible"
+    ],
+    "allowed_journal_sets": [
+      "tier1",
+      "off"
+    ],
+    "allowed_rank_journal_priority": [
+      "default",
+      "strict"
+    ],
+    "max_remove_terms": 4,
+    "max_remove_phrases": 2
+  },
+  "planner_expectations": {
+    "single_problem_focus": true,
+    "single_action_family_only": true,
+    "produce_json_only": true,
+    "do_not_execute_pipeline": true,
+    "do_not_edit_code": true,
+    "do_not_summarize_literature": true,
+    "prefer_small_bounded_patch": true,
+    "may_use_abstract_salience": true,
+    "may_use_noise_signals": true,
+    "may_use_recency_signals": true,
+    "must_remain_query_focused": true,
+    "prefer_multiple_candidate_families": true,
+    "candidate_family_count_target": [
+      2,
+      4
+    ],
+    "may_build_hybrid_strategy": true,
+    "derive_queries_from_topic_concepts": true,
+    "avoid_mechanical_copying_of_prior_queries": true,
+    "prefer_logic_over_topic_specific_templates": true,
+    "must_reason_over_concept_policy": true,
+    "must_not_drop_all_must_have_concepts": true,
+    "prefer_multiple_topic_alternatives": true,
+    "topic_alternative_count_target": [
+      2,
+      3
+    ]
+  },
+  "query_rules": {
+    "use_concept_groups": true,
+    "combine_groups_with_and": true,
+    "use_or_within_synonym_groups": true,
+    "prefer_quoted_multiword_phrases": true,
+    "prefer_phrase_level_anchors_over_loose_tokens": true,
+    "avoid_orphan_generic_terms": true,
+    "use_abstract_salience_noise_and_recency": true
+  },
+  "strategy_options": {
+    "allow_single_family": true,
+    "allow_hybrid_family_merge": true,
+    "candidate_family_count_target": [
+      2,
+      4
+    ],
+    "allow_multiple_topic_alternatives": true,
+    "topic_alternative_count_target": [
+      2,
+      3
+    ]
+  },
+  "topic_concepts": {
+    "intervention": [],
+    "condition": [],
+    "optional_qualifiers": [],
+    "exclusion_or_noise_terms": []
+  },
+  "concept_policy": {
+    "must_have_concepts": [],
+    "optional_concepts": [],
+    "broadening_concepts": [],
+    "require_at_least_one_family_to_preserve_all_must_have": true,
+    "target_families_preserving_all_must_have": 2
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.1",
+  "template": true,
+  "artifact_type": "subagent_patch_bundle",
+  "stage": "planner_subagent",
+  "subagent_id": "planner_agent",
+  "subagent_role": "query_planner",
+  "parent_agent": "prose_research_agent",
+  "mode": "shadow",
+  "scope": "current_run",
+  "run_id": null,
+  "lane": null,
+  "generated_at": null,
+  "subagent_runtime": {
+    "model_slot": "planner_subagent_model",
+    "resolved_model": null,
+    "resolved_alias": null,
+    "filled_by_runtime": true,
+    "notes": "Optional provenance only. Controller should not rely on these fields."
+  },
+  "openprose_context": {
+    "program_file": null,
+    "run_dir": null,
+    "bindings_dir": null,
+    "integration_mode": "openprose_subagent_artifact",
+    "controller_contract": "bounded_patch_bundle_proposal"
+  },
+  "based_on": {
+    "orchestration_plan": null,
+    "coverage_report": null,
+    "controller_decision": null,
+    "run_memory": null,
+    "ranked_candidate_digest": null
+  },
+  "problem_summary": {
+    "missing_angles": [],
+    "short_note": null,
+    "salience_note": null,
+    "noise_note": null,
+    "recency_note": null
+  },
+  "topic_alternatives": [
+    {
+      "alternative_id": "alt_primary",
+      "alternative_topic": null,
+      "concept_emphasis": "canonical",
+      "rationale": null
+    },
+    {
+      "alternative_id": "alt_broadened",
+      "alternative_topic": null,
+      "concept_emphasis": "response_focused",
+      "rationale": null
+    }
+  ],
+  "candidate_queries": [
+    {
+      "family_id": "precision_primary",
+      "topic_alternative_id": "alt_primary",
+      "family_strategy": "precision_primary",
+      "label": "Precision primary family",
+      "action_family": null,
+      "backend_queries": {
+        "pubmed_query": "",
+        "europe_pmc_query": null,
+        "query_backend_notes": null
+      },
+      "query_changes": {
+        "append_terms": [],
+        "append_phrases": [],
+        "remove_terms": [],
+        "remove_phrases": [],
+        "preserve_existing_terms": true
+      },
+      "search_overrides": {
+        "mode": null,
+        "journal_set": null,
+        "max_results_multiplier": null,
+        "per_query_multiplier": null
+      },
+      "rank_overrides": {
+        "journal_priority": null,
+        "max_per_journal": null
+      },
+      "why_this_candidate": null,
+      "retained_must_have_concepts": [],
+      "dropped_must_have_concepts": [],
+      "optional_concepts_used": [],
+      "broadening_concepts_used": [],
+      "concept_coverage_note": null
+    }
+  ],
+  "selection_intent": {
+    "allow_single_family": true,
+    "allow_hybrid_family_merge": true,
+    "prefer_explicit_backend_queries": true,
+    "require_distinct_family_strategies": true,
+    "allow_multiple_topic_alternatives": true,
+    "topic_alternative_count_target": [
+      2,
+      3
+    ],
+    "max_families_to_eval": 4
+  },
+  "evaluation_plan": {
+    "branch_type": "cheap_eval",
+    "stop_after_stage": "fulltext_resolve",
+    "compare_against": null,
+    "success_metrics": {
+      "target_deltas": {
+        "primary_study_like_count": 1,
+        "semantic_ready_count": 0
+      },
+      "must_not_decrease": [
+        "fulltext_yield_rate"
+      ],
+      "guardrails": {
+        "min_fulltext_yield_rate": 0.8,
+        "max_review_to_primary_ratio": 3.0
+      }
+    }
+  },
+  "confidence": null,
+  "planner_note": null,
+  "concept_policy": {
+    "must_have_concepts": [],
+    "optional_concepts": [],
+    "broadening_concepts": [],
+    "require_at_least_one_family_to_preserve_all_must_have": true,
+    "target_families_preserving_all_must_have": 2
+  }
+}
