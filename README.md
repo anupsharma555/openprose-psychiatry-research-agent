@@ -20,6 +20,14 @@ OpenProse provides the orchestration and planner-contract framework for the work
 - structured report generation with optional OpenClaw delivery to chat interfaces such as Discord
 - support for scheduled multi-query search workflows through OpenClaw cron jobs
 
+## Design Principles
+
+- deterministic execution before model-guided adaptation
+- bounded sub-agent scope rather than unconstrained workflow mutation
+- explicit controller decisions for stop, retry, or future-run learning
+- artifact-based workflow state so each stage produces inspectable intermediate outputs
+- retrieval diversification through competing query families rather than a single static search
+
 ## System Architecture
 
 The workflow is organized around three cooperating layers.
@@ -52,6 +60,44 @@ The repository is designed to supplement psychiatric research retrieval by allow
 8. Select a single family, build a hybrid merge, or reject all planner proposals.
 9. Materialize the selected strategy into downstream evidence artifacts when appropriate.
 10. Generate report outputs and optionally deliver them through OpenClaw.
+
+## How Query Competition Works
+
+The baseline retrieval path establishes the reference set for a topic. After that baseline has been ranked, resolved, extracted, and reviewed, the planner sub-agent generates multiple candidate query families rather than a single replacement query.
+
+Each family is evaluated in its own shadow branch. The evaluation process measures the resulting candidate set against the baseline using branch-level metrics such as primary-study coverage, review pressure, tier-1 journal representation, and full-text yield. The system can then:
+
+- reject all planner candidates
+- promote a single family
+- construct a hybrid merge from multiple acceptable families
+
+This design allows the repository to use model assistance for retrieval diversification without giving the model direct control over the evidence pipeline.
+
+## Run Directory Model
+
+At runtime, each execution is organized under `.prose/runs/<run_id>/`. Although this directory is excluded from version control, it is central to understanding how the repository functions.
+
+Typical run structure:
+
+```text
+.prose/runs/<run_id>/
+├── bindings/
+│   └── orchestration_plan.json
+├── artifacts/
+├── cache/
+├── fulltext/
+└── program.prose
+```
+
+The major runtime directories have distinct roles:
+
+- `bindings/`: orchestration inputs and run-scoped configuration
+- `artifacts/`: JSON and markdown outputs produced by each pipeline stage
+- `cache/`: reusable resolver and planner-support outputs
+- `fulltext/`: downloaded or resolved full-text material used for extraction
+- `program.prose`: run-specific snapshot of the OpenProse program
+
+This structure allows a run to be audited stage by stage and supports reproducibility, debugging, and post hoc review of retrieval decisions.
 
 ## Repository Layout
 
@@ -118,6 +164,24 @@ The repository is designed to supplement psychiatric research retrieval by allow
 - `prose_planner_shadow_eval.py`: deterministic evaluation of a single planner branch
 - `prose_planner_family_eval.py`: family comparison, selection, and hybrid merge logic
 - `prose_planner_wrapper.py`: wrapper over digest creation, runtime-input generation, planner execution, and family evaluation
+
+### Runtime Outputs
+
+The repository is designed around stage-specific artifacts rather than opaque in-memory execution. In practice, this means the workflow can emit:
+
+- retrieval records
+- ranked records
+- resolved records
+- extracted records
+- evidence records
+- coverage reports
+- controller decisions
+- planner candidate digests
+- planner runtime inputs
+- planner query bundles and shadow-evaluation outputs
+- report inputs, markdown reports, and delivery sidecars
+
+This artifact model makes it possible to inspect the exact transition from search results to report-ready evidence.
 
 ### Materialization and Reporting
 
