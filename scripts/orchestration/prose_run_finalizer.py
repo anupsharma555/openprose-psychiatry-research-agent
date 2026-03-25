@@ -189,7 +189,7 @@ def main() -> int:
 
     memory_cmd = [
         args.python_bin,
-        "prose_run_memory.py",
+        "scripts/orchestration/prose_run_memory.py",
         "--controller-input", str(controller_path),
         "--memory-path", str(args.memory_path),
     ]

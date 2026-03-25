@@ -127,7 +127,7 @@ def run_cmd(cmd: list[str], dry_run: bool = False) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Actuator for controller retry decisions, reruns the bounded next pass for the active run.")
-    p.add_argument("--controller-input", required=True, help="controller_decision.json from prose_controller.py")
+    p.add_argument("--controller-input", required=True, help="controller_decision.json from scripts/orchestration/prose_controller.py")
     p.add_argument("--retrieval-input", default="", help="Optional prior retrieval artifact. Defaults to latest retrieval_records*.json in the run artifacts directory.")
     p.add_argument("--ranked-input", default="", help="Optional prior ranked artifact. Defaults to latest ranked_records*.json in the run artifacts directory.")
     p.add_argument("--orchestration-plan", default="", help="Optional orchestration_plan.json override")
@@ -237,7 +237,7 @@ def main() -> int:
 
     search_cmd = [
         python_bin,
-        "prose_pubmed_search_worker.py",
+        "scripts/pipeline/prose_pubmed_search_worker.py",
         "--query", str(base_query),
         "--mode", str(base_mode),
         "--max-results", str(next_max_results),
@@ -254,7 +254,7 @@ def main() -> int:
 
     rank_cmd = [
         python_bin,
-        "prose_pubmed_normalize_rank.py",
+        "scripts/pipeline/prose_pubmed_normalize_rank.py",
         "--input", str(paths["retrieval"]),
         "--lane", str(lane),
         "--query", str(base_query),
@@ -269,7 +269,7 @@ def main() -> int:
 
     resolve_cmd = [
         python_bin,
-        "prose_pubmed_fulltext_resolver.py",
+        "scripts/pipeline/prose_pubmed_fulltext_resolver.py",
         "--input", str(paths["ranked"]),
         "--records-key", "kept_records",
         "--top-k", str(next_rank_top_k),
@@ -289,7 +289,7 @@ def main() -> int:
 
     extract_cmd = [
         python_bin,
-        "prose_pubmed_fulltext_extract.py",
+        "scripts/pipeline/prose_pubmed_fulltext_extract.py",
         "--input", str(paths["resolved"]),
         "--records-key", "resolved_records",
         "--top-k", str(next_rank_top_k),
@@ -301,7 +301,7 @@ def main() -> int:
 
     evidence_cmd = [
         python_bin,
-        "prose_evidence_extract.py",
+        "scripts/pipeline/prose_evidence_extract.py",
         "--input", str(paths["extracted"]),
         "--records-key", "extracted_records",
         "--top-k", str(next_rank_top_k),
@@ -313,7 +313,7 @@ def main() -> int:
 
     coverage_cmd = [
         python_bin,
-        "prose_coverage_review.py",
+        "scripts/pipeline/prose_coverage_review.py",
         "--ranked-input", str(paths["ranked"]),
         "--resolved-input", str(paths["resolved"]),
         "--extracted-input", str(paths["extracted"]),
@@ -326,7 +326,7 @@ def main() -> int:
 
     controller_cmd = [
         python_bin,
-        "prose_controller.py",
+        "scripts/orchestration/prose_controller.py",
         "--coverage-input", str(paths["coverage"]),
         "--run-id", str(run_id),
         "--lane", str(lane),

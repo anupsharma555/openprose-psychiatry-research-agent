@@ -624,7 +624,7 @@ def preview_lines(records: list[dict[str, Any]], top_k: int) -> list[str]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Normalize and rank PubMed retrieval output for the prose pipeline.")
-    parser.add_argument("--input", required=True, help="Input JSON from prose_pubmed_search_worker.py, or - for stdin")
+    parser.add_argument("--input", required=True, help="Input JSON from scripts/pipeline/prose_pubmed_search_worker.py, or - for stdin")
     parser.add_argument("--write", default="", help="Optional path to write normalized JSON")
     parser.add_argument("--preview", action="store_true", help="Print a compact human preview")
     parser.add_argument("--lane", choices=["core_evidence", "recent_peer_reviewed", "frontier", "reviews", "general"], default="general")

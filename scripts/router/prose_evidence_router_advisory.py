@@ -86,7 +86,7 @@ def main() -> int:
 
     prepare_direct_cmd = [
         python_bin,
-        "prose_evidence_prepare.py",
+        "scripts/pipeline/prose_evidence_prepare.py",
         "--evidence-input", args.direct_evidence_input,
         "--write", str(prepared_direct),
     ]
@@ -94,7 +94,7 @@ def main() -> int:
 
     prepare_related_cmd = [
         python_bin,
-        "prose_evidence_prepare.py",
+        "scripts/pipeline/prose_evidence_prepare.py",
         "--evidence-input", args.related_evidence_input,
         "--write", str(prepared_related),
     ]
@@ -102,7 +102,7 @@ def main() -> int:
 
     runtime_cmd = [
         python_bin,
-        "prose_evidence_router_runtime_input.py",
+        "scripts/router/prose_evidence_router_runtime_input.py",
         "--controller-input", args.controller_input,
         "--coverage-input", args.coverage_input,
         "--primary-evidence-input", str(prepared_direct),
@@ -114,7 +114,7 @@ def main() -> int:
 
     router_cmd = [
         python_bin,
-        "prose_evidence_router_agent.py",
+        "scripts/router/prose_evidence_router_agent.py",
         "--runtime-input", str(runtime_input),
         "--model", args.router_model,
         "--model-alias", args.router_model_alias,
@@ -124,7 +124,7 @@ def main() -> int:
 
     compare_cmd = [
         python_bin,
-        "prose_evidence_router_compare.py",
+        "scripts/router/prose_evidence_router_compare.py",
         "--portfolio-input", args.portfolio_input,
         "--router-shadow-input", str(router_shadow),
         "--write", str(compare_json),
@@ -133,7 +133,7 @@ def main() -> int:
 
     memory_cmd = [
         python_bin,
-        "prose_evidence_router_memory_writeback.py",
+        "scripts/router/prose_evidence_router_memory_writeback.py",
         "--compare-input", str(compare_json),
         "--router-shadow-input", str(router_shadow),
         "--memory-path", args.memory_path,
@@ -142,7 +142,7 @@ def main() -> int:
 
     promote_cmd = [
         python_bin,
-        "prose_evidence_router_promote.py",
+        "scripts/router/prose_evidence_router_promote.py",
         "--portfolio-input", args.portfolio_input,
         "--router-shadow-input", str(router_shadow),
         "--router-runtime-input", str(runtime_input),

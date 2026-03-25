@@ -1,1 +1,0 @@
-scripts/pipeline/prose_coverage_review.py

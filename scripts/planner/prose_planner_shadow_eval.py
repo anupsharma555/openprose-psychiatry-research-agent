@@ -486,7 +486,7 @@ def main() -> int:
 
         search_cmd = [
             python_bin,
-            "prose_pubmed_search_worker.py",
+            "scripts/pipeline/prose_pubmed_search_worker.py",
             "--query", str(base_query),
             "--mode", str(base_mode),
             "--max-results", str(next_max_results),
@@ -503,7 +503,7 @@ def main() -> int:
 
         rank_cmd = [
             python_bin,
-            "prose_pubmed_normalize_rank.py",
+            "scripts/pipeline/prose_pubmed_normalize_rank.py",
             "--input", str(paths["retrieval"]),
             "--lane", str(lane),
             "--query", str(base_query),
@@ -518,7 +518,7 @@ def main() -> int:
 
         resolve_cmd = [
             python_bin,
-            "prose_pubmed_fulltext_resolver.py",
+            "scripts/pipeline/prose_pubmed_fulltext_resolver.py",
             "--input", str(paths["ranked"]),
             "--records-key", "kept_records",
             "--top-k", str(next_rank_top_k),

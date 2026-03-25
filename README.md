@@ -30,14 +30,14 @@ This layer coordinates run creation, retries, controller decisions, materializat
 
 Primary files:
 
-- `prose_research_start.py`
-- `prose_research_run.py`
-- `prose_controller.py`
-- `prose_retry_runner.py`
-- `prose_run_memory.py`
-- `prose_run_finalizer.py`
-- `prose_materialize_family.py`
-- `prose_hybrid_materialize.py`
+- `scripts/orchestration/prose_research_start.py`
+- `scripts/orchestration/prose_research_run.py`
+- `scripts/orchestration/prose_controller.py`
+- `scripts/orchestration/prose_retry_runner.py`
+- `scripts/orchestration/prose_run_memory.py`
+- `scripts/orchestration/prose_run_finalizer.py`
+- `scripts/orchestration/prose_materialize_family.py`
+- `scripts/orchestration/prose_hybrid_materialize.py`
 
 ### `scripts/pipeline/`
 
@@ -45,16 +45,16 @@ This layer contains the deterministic retrieval and evidence-processing pipeline
 
 Primary files:
 
-- `prose_pubmed_search_worker.py`
-- `prose_pubmed_normalize_rank.py`
-- `prose_pubmed_fulltext_resolver.py`
-- `prose_pubmed_fulltext_extract.py`
-- `prose_resolved_reclassify.py`
-- `prose_extracted_backfill.py`
-- `prose_evidence_extract.py`
-- `prose_evidence_prepare.py`
-- `prose_evidence_label_normalize.py`
-- `prose_coverage_review.py`
+- `scripts/pipeline/prose_pubmed_search_worker.py`
+- `scripts/pipeline/prose_pubmed_normalize_rank.py`
+- `scripts/pipeline/prose_pubmed_fulltext_resolver.py`
+- `scripts/pipeline/prose_pubmed_fulltext_extract.py`
+- `scripts/pipeline/prose_resolved_reclassify.py`
+- `scripts/pipeline/prose_extracted_backfill.py`
+- `scripts/pipeline/prose_evidence_extract.py`
+- `scripts/pipeline/prose_evidence_prepare.py`
+- `scripts/pipeline/prose_evidence_label_normalize.py`
+- `scripts/pipeline/prose_coverage_review.py`
 
 ### `scripts/planner/`
 
@@ -62,12 +62,12 @@ This layer contains the query-planning sub-agent and the family-level evaluation
 
 Primary files:
 
-- `prose_planner_candidate_digest.py`
-- `prose_planner_runtime_input.py`
-- `prose_planner_agent.py`
-- `prose_planner_shadow_eval.py`
-- `prose_planner_family_eval.py`
-- `prose_planner_wrapper.py`
+- `scripts/planner/prose_planner_candidate_digest.py`
+- `scripts/planner/prose_planner_runtime_input.py`
+- `scripts/planner/prose_planner_agent.py`
+- `scripts/planner/prose_planner_shadow_eval.py`
+- `scripts/planner/prose_planner_family_eval.py`
+- `scripts/planner/prose_planner_wrapper.py`
 
 ### `scripts/router/`
 
@@ -75,12 +75,12 @@ This layer contains the advisory evidence-router sub-agent, which compares model
 
 Primary files:
 
-- `prose_evidence_router_runtime_input.py`
-- `prose_evidence_router_agent.py`
-- `prose_evidence_router_compare.py`
-- `prose_evidence_router_memory_writeback.py`
-- `prose_evidence_router_promote.py`
-- `prose_evidence_router_advisory.py`
+- `scripts/router/prose_evidence_router_runtime_input.py`
+- `scripts/router/prose_evidence_router_agent.py`
+- `scripts/router/prose_evidence_router_compare.py`
+- `scripts/router/prose_evidence_router_memory_writeback.py`
+- `scripts/router/prose_evidence_router_promote.py`
+- `scripts/router/prose_evidence_router_advisory.py`
 
 ### `scripts/reporting/`
 
@@ -88,16 +88,16 @@ This layer contains deterministic report assembly, portfolio report preparation,
 
 Primary files:
 
-- `prose_run_report.py`
-- `prose_run_report_input.py`
-- `prose_report_input_enrich.py`
-- `prose_portfolio_report_input.py`
-- `prose_run_report_ai.py`
-- `prose_post_discord.py`
-- `prose_report_critic_runtime_input.py`
-- `prose_report_critic_agent.py`
-- `prose_report_critic_promote.py`
-- `prose_report_critic_advisory.py`
+- `scripts/reporting/prose_run_report.py`
+- `scripts/reporting/prose_run_report_input.py`
+- `scripts/reporting/prose_report_input_enrich.py`
+- `scripts/reporting/prose_portfolio_report_input.py`
+- `scripts/reporting/prose_run_report_ai.py`
+- `scripts/reporting/prose_post_discord.py`
+- `scripts/reporting/prose_report_critic_runtime_input.py`
+- `scripts/reporting/prose_report_critic_agent.py`
+- `scripts/reporting/prose_report_critic_promote.py`
+- `scripts/reporting/prose_report_critic_advisory.py`
 
 ### `scripts/diagnostics/`
 
@@ -105,18 +105,8 @@ This layer contains targeted diagnostics for weak HTML and publisher-access fail
 
 Primary files:
 
-- `prose_html_audit.py`
-- `prose_html_probe.py`
-
-## Compatibility Model
-
-The implementation files now live under `scripts/*`. For compatibility with earlier commands and automation, root-level `prose_*.py` entries are retained as lightweight symlink shims that point to the new script locations.
-
-This allows:
-
-- newer documentation to describe the real directory structure
-- existing command invocations to continue functioning
-- later migration to a stricter package or module-based invocation model
+- `scripts/diagnostics/prose_html_audit.py`
+- `scripts/diagnostics/prose_html_probe.py`
 
 ## Active Sub-Agents
 
@@ -156,7 +146,7 @@ The active planner evaluation path is centered on:
 - `scripts/planner/prose_planner_wrapper.py`
 - `scripts/planner/prose_planner_family_eval.py`
 
-`prose_planner_shadow_eval.py` remains part of the lower-level branch evaluation path, but the principal selection logic now operates at the family level. The system can reject all planner proposals, select a single family, or construct a hybrid family merge, and only selected strategies are materialized downstream.
+`scripts/planner/prose_planner_shadow_eval.py` remains part of the lower-level branch evaluation path, but the principal selection logic now operates at the family level. The system can reject all planner proposals, select a single family, or construct a hybrid family merge, and only selected strategies are materialized downstream.
 
 ## End-to-End Workflow
 
@@ -208,7 +198,6 @@ The runtime model is artifact-driven. Stages emit inspectable JSON or markdown o
 │   ├── router/
 │   ├── reporting/
 │   └── diagnostics/
-├── prose_*.py
 ├── README.md
 ├── DEPENDENCIES.md
 ├── requirements.txt
@@ -272,7 +261,7 @@ python3 -m pip install -r requirements.txt
 Run the integrated workflow:
 
 ```bash
-python3 prose_research_start.py \
+python3 scripts/orchestration/prose_research_start.py \
   --topic "esketamine biomarkers major depressive disorder" \
   --execute \
   --materialize-selected \
@@ -282,7 +271,7 @@ python3 prose_research_start.py \
 Run with optional Discord delivery:
 
 ```bash
-python3 prose_research_start.py \
+python3 scripts/orchestration/prose_research_start.py \
   --topic "esketamine biomarkers major depressive disorder" \
   --execute \
   --materialize-selected \
@@ -293,7 +282,7 @@ python3 prose_research_start.py \
 
 ## Repository Hygiene
 
-The repository is structured to include reusable source code, compatibility shims, and stable sub-agent templates while excluding runtime artifacts and environment-specific files.
+The repository is structured to include reusable source code and stable sub-agent templates while excluding runtime artifacts and environment-specific files.
 
 No API keys or runtime credentials are stored in the repository. Required secrets, including OpenAI and PubMed / NCBI credentials, must be provided through the runtime environment.
 

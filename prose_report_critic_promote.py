@@ -1,1 +1,0 @@
-scripts/reporting/prose_report_critic_promote.py

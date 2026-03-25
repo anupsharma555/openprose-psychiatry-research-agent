@@ -76,7 +76,7 @@ def main() -> int:
 
     runtime_cmd = [
         python_bin,
-        "prose_report_critic_runtime_input.py",
+        "scripts/reporting/prose_report_critic_runtime_input.py",
         "--report-input", args.report_input,
         "--report-md", args.report_md,
         "--digest-md", args.digest_md,
@@ -86,7 +86,7 @@ def main() -> int:
 
     critic_cmd = [
         python_bin,
-        "prose_report_critic_agent.py",
+        "scripts/reporting/prose_report_critic_agent.py",
         "--runtime-input", str(runtime_input),
         "--model", args.critic_model,
         "--model-alias", args.critic_model_alias,
@@ -96,7 +96,7 @@ def main() -> int:
 
     promote_cmd = [
         python_bin,
-        "prose_report_critic_promote.py",
+        "scripts/reporting/prose_report_critic_promote.py",
         "--report-input", args.report_input,
         "--critic-shadow-input", str(critic_shadow),
         "--write", str(promoted_input),

@@ -74,7 +74,7 @@ def main() -> int:
 
     cmd = [
         python_bin,
-        "prose_hybrid_materialize.py",
+        "scripts/orchestration/prose_hybrid_materialize.py",
         "--family-eval", str(override_path),
         "--orchestration-plan", args.orchestration_plan,
         "--write", args.write,

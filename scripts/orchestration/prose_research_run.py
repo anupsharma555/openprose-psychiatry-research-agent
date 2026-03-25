@@ -10,15 +10,13 @@ if str(_WORKSPACE_ROOT) not in _workspace_sys.path:
 import argparse
 import json
 import math
+import os
 import shlex
 import subprocess
 import sys
 from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
-
-DEFAULT_PROSE_RESEARCH_DISCORD_CHANNEL_ID = "1483624740793880588"
-
 
 def utc_now_iso() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -225,7 +223,7 @@ def main() -> int:
         paths = build_baseline_paths(run_dir)
 
         search_cmd = [
-            python_bin, "prose_pubmed_search_worker.py",
+            python_bin, "scripts/pipeline/prose_pubmed_search_worker.py",
             "--query", topic,
             "--mode", defaults["mode"],
             "--max-results", str(defaults["max_results"]),
@@ -238,7 +236,7 @@ def main() -> int:
             "--write", str(paths["retrieval"]),
         ]
         rank_cmd = [
-            python_bin, "prose_pubmed_normalize_rank.py",
+            python_bin, "scripts/pipeline/prose_pubmed_normalize_rank.py",
             "--input", str(paths["retrieval"]),
             "--lane", lane,
             "--query", topic,
@@ -251,7 +249,7 @@ def main() -> int:
             "--write", str(paths["ranked"]),
         ]
         resolve_cmd = [
-            python_bin, "prose_pubmed_fulltext_resolver.py",
+            python_bin, "scripts/pipeline/prose_pubmed_fulltext_resolver.py",
             "--input", str(paths["ranked"]),
             "--records-key", "kept_records",
             "--top-k", str(defaults["top_k"]),
@@ -265,7 +263,7 @@ def main() -> int:
             "--write", str(paths["resolved"]),
         ]
         extract_cmd = [
-            python_bin, "prose_pubmed_fulltext_extract.py",
+            python_bin, "scripts/pipeline/prose_pubmed_fulltext_extract.py",
             "--input", str(paths["resolved"]),
             "--records-key", "resolved_records",
             "--top-k", str(defaults["top_k"]),
@@ -275,7 +273,7 @@ def main() -> int:
             "--write", str(paths["extracted"]),
         ]
         evidence_cmd = [
-            python_bin, "prose_evidence_extract.py",
+            python_bin, "scripts/pipeline/prose_evidence_extract.py",
             "--input", str(paths["extracted"]),
             "--records-key", "extracted_records",
             "--top-k", str(defaults["top_k"]),
@@ -285,7 +283,7 @@ def main() -> int:
             "--write", str(paths["evidence"]),
         ]
         coverage_cmd = [
-            python_bin, "prose_coverage_review.py",
+            python_bin, "scripts/pipeline/prose_coverage_review.py",
             "--ranked-input", str(paths["ranked"]),
             "--resolved-input", str(paths["resolved"]),
             "--extracted-input", str(paths["extracted"]),
@@ -296,7 +294,7 @@ def main() -> int:
             "--write", str(paths["coverage"]),
         ]
         controller_cmd = [
-            python_bin, "prose_controller.py",
+            python_bin, "scripts/orchestration/prose_controller.py",
             "--coverage-input", str(paths["coverage"]),
             "--run-id", run_id,
             "--lane", lane,
@@ -335,7 +333,7 @@ def main() -> int:
 
         retry_cmd = [
             python_bin,
-            "prose_retry_runner.py",
+            "scripts/orchestration/prose_retry_runner.py",
             "--controller-input", str(controller_path),
             "--orchestration-plan", plan_path,
             "--write", str(retry_summary),
@@ -363,7 +361,7 @@ def main() -> int:
         finalizer_out = run_dir / "artifacts" / f"run_finalizer.{tag}.json"
         finalizer_cmd = [
             python_bin,
-            "prose_run_finalizer.py",
+            "scripts/orchestration/prose_run_finalizer.py",
             "--controller-input", str(controller_path),
             "--coverage-input", str(coverage_path),
             "--evidence-input", str(evidence_path),
@@ -386,7 +384,7 @@ def main() -> int:
                 planner_wrapper_out = run_dir / "artifacts" / f"planner_wrapper.{tag}.json"
                 planner_cmd = [
                     python_bin,
-                    "prose_planner_wrapper.py",
+                    "scripts/planner/prose_planner_wrapper.py",
                     "--controller-input", str(controller_path),
                     "--coverage-input", str(coverage_path),
                     "--orchestration-plan", plan_path,
@@ -413,7 +411,7 @@ def main() -> int:
                     materialize_out = run_dir / "artifacts" / f"planner_selected_materialize.{tag}.json"
                     materialize_cmd = [
                         python_bin,
-                        "prose_hybrid_materialize.py",
+                        "scripts/orchestration/prose_hybrid_materialize.py",
                         "--family-eval", str(family_eval_path),
                         "--orchestration-plan", plan_path,
                         "--write", str(materialize_out),
@@ -447,7 +445,7 @@ def main() -> int:
             direct_materialize_out = run_dir / "artifacts" / f"direct_family_materialize.{tag}.json"
             direct_cmd = [
                 python_bin,
-                "prose_materialize_family.py",
+                "scripts/orchestration/prose_materialize_family.py",
                 "--family-eval", str(planner_eval_path),
                 "--family-id", selected_direct_family_id,
                 "--orchestration-plan", plan_path,
@@ -469,7 +467,7 @@ def main() -> int:
             related_materialize_out = run_dir / "artifacts" / f"related_family_materialize.{tag}.json"
             related_cmd = [
                 python_bin,
-                "prose_materialize_family.py",
+                "scripts/orchestration/prose_materialize_family.py",
                 "--family-eval", str(planner_eval_path),
                 "--family-id", selected_related_family_id,
                 "--orchestration-plan", plan_path,
@@ -495,7 +493,7 @@ def main() -> int:
         if direct_evidence_for_report and related_evidence_for_report:
             portfolio_cmd = [
                 python_bin,
-                "prose_portfolio_report_input.py",
+                "scripts/reporting/prose_portfolio_report_input.py",
                 "--controller-input", str(controller_for_report),
                 "--coverage-input", str(coverage_for_report),
                 "--direct-evidence-input", str(direct_evidence_for_report),
@@ -524,7 +522,7 @@ def main() -> int:
                     advisory_summary_out = run_dir / "artifacts" / f"evidence_router_advisory.{tag}.json"
                     advisory_cmd = [
                         python_bin,
-                        "prose_evidence_router_advisory.py",
+                        "scripts/router/prose_evidence_router_advisory.py",
                         "--controller-input", str(controller_for_report),
                         "--coverage-input", str(coverage_for_report),
                         "--direct-evidence-input", str(direct_evidence_for_router),
@@ -548,7 +546,7 @@ def main() -> int:
         if not portfolio_mode:
             report_input_cmd = [
                 python_bin,
-                "prose_run_report_input.py",
+                "scripts/reporting/prose_run_report_input.py",
                 "--controller-input", str(controller_for_report),
                 "--coverage-input", str(coverage_for_report),
                 "--evidence-input", str(evidence_for_report),
@@ -565,7 +563,7 @@ def main() -> int:
         enriched_report_input_out = run_dir / "artifacts" / f"prose_run_report_input_enriched.{tag}.json"
         enrich_report_input_cmd = [
             python_bin,
-            "prose_report_input_enrich.py",
+            "scripts/reporting/prose_report_input_enrich.py",
             "--report-input", str(report_input_out),
             "--write", str(enriched_report_input_out),
         ]
@@ -582,7 +580,7 @@ def main() -> int:
 
         report_ai_cmd = [
             python_bin,
-            "prose_run_report_ai.py",
+            "scripts/reporting/prose_run_report_ai.py",
             "--report-input", str(report_input_out),
             "--model", args.report_model,
             "--message", f"Prose Research Run: {compact_ws(plan.get('topic')) or run_id}",
@@ -590,9 +588,7 @@ def main() -> int:
             "--write-report-md", str(report_md),
             "--write-digest-md", str(digest_md),
         ]
-        discord_channel_id = compact_ws(args.discord_channel_id)
-        if args.post_discord and not discord_channel_id:
-            discord_channel_id = DEFAULT_PROSE_RESEARCH_DISCORD_CHANNEL_ID
+        discord_channel_id = compact_ws(args.discord_channel_id) or compact_ws(os.environ.get("PROSE_RESEARCH_DISCORD_CHANNEL_ID", ""))
         if discord_channel_id:
             report_ai_cmd.extend(["--discord-channel-id", discord_channel_id])
 
@@ -608,7 +604,7 @@ def main() -> int:
             post_out = run_dir / "artifacts" / f"discord_post.{tag}.json"
             post_cmd = [
                 python_bin,
-                "prose_post_discord.py",
+                "scripts/reporting/prose_post_discord.py",
                 "--delivery-json", str(delivery_json),
                 "--write", str(post_out),
             ]

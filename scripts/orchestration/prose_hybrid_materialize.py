@@ -360,7 +360,7 @@ def main() -> int:
 
     reclassify_cmd = [
         python_bin,
-        "prose_resolved_reclassify.py",
+        "scripts/pipeline/prose_resolved_reclassify.py",
         "--input", str(resolved_out),
         "--ranked-input", str(ranked_out),
         "--write", str(resolved_reclassified_out),
@@ -368,7 +368,7 @@ def main() -> int:
 
     extract_cmd = [
         python_bin,
-        "prose_pubmed_fulltext_extract.py",
+        "scripts/pipeline/prose_pubmed_fulltext_extract.py",
         "--input", str(resolved_reclassified_out),
         "--records-key", "resolved_records",
         "--top-k", str(len(resolved_records)),
@@ -380,7 +380,7 @@ def main() -> int:
 
     backfill_cmd = [
         python_bin,
-        "prose_extracted_backfill.py",
+        "scripts/pipeline/prose_extracted_backfill.py",
         "--input", str(extracted_out),
         "--ranked-input", str(ranked_out),
         "--resolved-input", str(resolved_reclassified_out),
@@ -389,7 +389,7 @@ def main() -> int:
 
     evidence_cmd = [
         python_bin,
-        "prose_evidence_extract.py",
+        "scripts/pipeline/prose_evidence_extract.py",
         "--input", str(extracted_backfilled_out),
         "--records-key", "extracted_records",
         "--run-id", run_id,
@@ -400,7 +400,7 @@ def main() -> int:
 
     coverage_cmd = [
         python_bin,
-        "prose_coverage_review.py",
+        "scripts/pipeline/prose_coverage_review.py",
         "--ranked-input", str(ranked_out),
         "--resolved-input", str(resolved_out),
         "--extracted-input", str(extracted_backfilled_out),
@@ -413,7 +413,7 @@ def main() -> int:
 
     controller_cmd = [
         python_bin,
-        "prose_controller.py",
+        "scripts/orchestration/prose_controller.py",
         "--coverage-input", str(coverage_out),
         "--run-id", run_id,
         "--lane", lane,
@@ -439,7 +439,7 @@ def main() -> int:
         if compact_ws(controller_payload.get("decision")) == "stop":
             finalizer_cmd = [
                 python_bin,
-                "prose_run_finalizer.py",
+                "scripts/orchestration/prose_run_finalizer.py",
                 "--controller-input", str(controller_out),
                 "--coverage-input", str(coverage_out),
                 "--evidence-input", str(evidence_out),

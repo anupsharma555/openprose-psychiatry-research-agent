@@ -265,7 +265,7 @@ def build_future_run_patch_candidates(
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Controller for prose research runs, chooses retry vs stop and one bounded next action.")
-    p.add_argument("--coverage-input", required=True, help="coverage_report.json from prose_coverage_review.py")
+    p.add_argument("--coverage-input", required=True, help="coverage_report.json from scripts/pipeline/prose_coverage_review.py")
     p.add_argument("--run-id", default="", help="Optional run identifier for artifact metadata.")
     p.add_argument("--lane", default="", help="Optional lane name, for example core_evidence or frontier.")
     p.add_argument("--orchestration-plan", default="", help="Optional path to orchestration_plan.json for context metadata.")

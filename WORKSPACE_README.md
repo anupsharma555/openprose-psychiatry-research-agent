@@ -6,7 +6,7 @@ This workspace powers the **prose research agent**, its deterministic literature
 
 Markdown and workspace identity files remain at the root.
 
-Python implementation files are now physically organized under:
+Python implementation files are organized under:
 
 - `scripts/orchestration/`
 - `scripts/pipeline/`
@@ -15,7 +15,7 @@ Python implementation files are now physically organized under:
 - `scripts/reporting/`
 - `scripts/diagnostics/`
 
-For compatibility, root-level **symlink shims** remain in place for `prose_*.py` so older commands continue to work.
+Use the `scripts/*` paths directly for implementation, invocation, and future edits.
 
 ## Why this structure
 
@@ -24,7 +24,7 @@ The current goal is to improve maintainability without destabilizing the working
 So the workspace now uses:
 
 - **physical organization** in folders
-- **compatibility shims** at the root
+- direct script entrypoints under `scripts/*`
 - a later package-style refactor can happen once the current pipeline is more stable
 
 ## Main workflow layers
@@ -33,14 +33,14 @@ So the workspace now uses:
 Location: `scripts/orchestration/`
 
 Main files:
-- `prose_research_start.py`
-- `prose_research_run.py`
-- `prose_controller.py`
-- `prose_retry_runner.py`
-- `prose_run_memory.py`
-- `prose_run_finalizer.py`
-- `prose_materialize_family.py`
-- `prose_hybrid_materialize.py`
+- `scripts/orchestration/prose_research_start.py`
+- `scripts/orchestration/prose_research_run.py`
+- `scripts/orchestration/prose_controller.py`
+- `scripts/orchestration/prose_retry_runner.py`
+- `scripts/orchestration/prose_run_memory.py`
+- `scripts/orchestration/prose_run_finalizer.py`
+- `scripts/orchestration/prose_materialize_family.py`
+- `scripts/orchestration/prose_hybrid_materialize.py`
 
 These scripts launch and coordinate runs, retries, family materialization, finalization, and report generation flow.
 
@@ -48,16 +48,16 @@ These scripts launch and coordinate runs, retries, family materialization, final
 Location: `scripts/pipeline/`
 
 Main files:
-- `prose_pubmed_search_worker.py`
-- `prose_pubmed_normalize_rank.py`
-- `prose_pubmed_fulltext_resolver.py`
-- `prose_pubmed_fulltext_extract.py`
-- `prose_resolved_reclassify.py`
-- `prose_extracted_backfill.py`
-- `prose_evidence_extract.py`
-- `prose_evidence_prepare.py`
-- `prose_evidence_label_normalize.py`
-- `prose_coverage_review.py`
+- `scripts/pipeline/prose_pubmed_search_worker.py`
+- `scripts/pipeline/prose_pubmed_normalize_rank.py`
+- `scripts/pipeline/prose_pubmed_fulltext_resolver.py`
+- `scripts/pipeline/prose_pubmed_fulltext_extract.py`
+- `scripts/pipeline/prose_resolved_reclassify.py`
+- `scripts/pipeline/prose_extracted_backfill.py`
+- `scripts/pipeline/prose_evidence_extract.py`
+- `scripts/pipeline/prose_evidence_prepare.py`
+- `scripts/pipeline/prose_evidence_label_normalize.py`
+- `scripts/pipeline/prose_coverage_review.py`
 
 These scripts handle retrieval, ranking, resolution, extraction, evidence creation, cleanup, and deterministic enrichment.
 
@@ -65,12 +65,12 @@ These scripts handle retrieval, ranking, resolution, extraction, evidence creati
 Location: `scripts/planner/`
 
 Main files:
-- `prose_planner_candidate_digest.py`
-- `prose_planner_runtime_input.py`
-- `prose_planner_agent.py`
-- `prose_planner_shadow_eval.py`
-- `prose_planner_family_eval.py`
-- `prose_planner_wrapper.py`
+- `scripts/planner/prose_planner_candidate_digest.py`
+- `scripts/planner/prose_planner_runtime_input.py`
+- `scripts/planner/prose_planner_agent.py`
+- `scripts/planner/prose_planner_shadow_eval.py`
+- `scripts/planner/prose_planner_family_eval.py`
+- `scripts/planner/prose_planner_wrapper.py`
 
 The planner generates topic alternatives and multiple query families, then the deterministic evaluator compares those families and selects:
 - a best overall family
@@ -81,12 +81,12 @@ The planner generates topic alternatives and multiple query families, then the d
 Location: `scripts/router/`
 
 Main files:
-- `prose_evidence_router_runtime_input.py`
-- `prose_evidence_router_agent.py`
-- `prose_evidence_router_compare.py`
-- `prose_evidence_router_memory_writeback.py`
-- `prose_evidence_router_promote.py`
-- `prose_evidence_router_advisory.py`
+- `scripts/router/prose_evidence_router_runtime_input.py`
+- `scripts/router/prose_evidence_router_agent.py`
+- `scripts/router/prose_evidence_router_compare.py`
+- `scripts/router/prose_evidence_router_memory_writeback.py`
+- `scripts/router/prose_evidence_router_promote.py`
+- `scripts/router/prose_evidence_router_advisory.py`
 
 The evidence router is an advisory sub-agent that:
 - partitions papers into:
@@ -102,16 +102,16 @@ The evidence router is an advisory sub-agent that:
 Location: `scripts/reporting/`
 
 Main files:
-- `prose_run_report.py`
-- `prose_run_report_input.py`
-- `prose_report_input_enrich.py`
-- `prose_portfolio_report_input.py`
-- `prose_run_report_ai.py`
-- `prose_post_discord.py`
-- `prose_report_critic_runtime_input.py`
-- `prose_report_critic_agent.py`
-- `prose_report_critic_promote.py`
-- `prose_report_critic_advisory.py`
+- `scripts/reporting/prose_run_report.py`
+- `scripts/reporting/prose_run_report_input.py`
+- `scripts/reporting/prose_report_input_enrich.py`
+- `scripts/reporting/prose_portfolio_report_input.py`
+- `scripts/reporting/prose_run_report_ai.py`
+- `scripts/reporting/prose_post_discord.py`
+- `scripts/reporting/prose_report_critic_runtime_input.py`
+- `scripts/reporting/prose_report_critic_agent.py`
+- `scripts/reporting/prose_report_critic_promote.py`
+- `scripts/reporting/prose_report_critic_advisory.py`
 
 The reporting stack now supports:
 - enriched report input
@@ -129,8 +129,8 @@ The reporting stack now supports:
 Location: `scripts/diagnostics/`
 
 Main files:
-- `prose_html_audit.py`
-- `prose_html_probe.py`
+- `scripts/diagnostics/prose_html_audit.py`
+- `scripts/diagnostics/prose_html_probe.py`
 
 These scripts are used to inspect weak HTML and publisher-access failure modes.
 
@@ -196,14 +196,12 @@ Still being refined:
 
 ## Important note on paths
 
-The **real implementation files** now live under `scripts/*`.
-
-The root-level `prose_*.py` entries are compatibility symlink shims.
+The implementation files live under `scripts/*`.
 
 This means:
-- old commands should still work
-- new documentation should refer to the folder structure
-- future cleanup can remove root symlinks after the codebase is fully adjusted
+- commands and automation should target `scripts/*`
+- documentation should refer to the folder structure directly
+- future cleanup can focus on packaging rather than path indirection
 
 ## Recommended next steps
 
@@ -211,4 +209,4 @@ This means:
 2. compare deterministic routing vs evidence router routing
 3. compare first-pass vs critic-improved reports
 4. once stable, decide whether to promote the advisory sub-agents to stronger defaults
-5. later, replace root symlink shims with a true package/module invocation strategy
+5. later, consider a true package/module invocation strategy

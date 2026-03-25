@@ -9,15 +9,13 @@ if str(_WORKSPACE_ROOT) not in _workspace_sys.path:
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
 from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
-
-DEFAULT_PROSE_RESEARCH_DISCORD_CHANNEL_ID = "1483624740793880588"
-
 
 def utc_now_iso() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -77,13 +75,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--run-prefix", default="", help="Optional prefix for generated run ids")
     p.add_argument("--plan-template", default="", help="Optional orchestration_plan.json template override")
     p.add_argument("--program-template", default=".prose/programs/prose_research.prose", help="Canonical prose program path")
-    p.add_argument("--execute", action="store_true", help="Immediately hand off to prose_research_run.py")
+    p.add_argument("--execute", action="store_true", help="Immediately hand off to scripts/orchestration/prose_research_run.py")
     p.add_argument("--python-bin", default=sys.executable, help="Python interpreter to use for subprocess calls")
     p.add_argument("--memory-path", default=".prose/memory/run_memory.json", help="Shared run memory path")
     p.add_argument("--planner-model", default="gpt-5-mini", help="Planner model")
     p.add_argument("--planner-alias", default="planner_subagent_model", help="Planner alias")
     p.add_argument("--report-model", default="gpt-4o-mini", help="Report model")
-    p.add_argument("--discord-channel-id", default="", help="Optional Discord channel id")
+    p.add_argument("--discord-channel-id", default="", help="Optional Discord channel id; may also be provided via PROSE_RESEARCH_DISCORD_CHANNEL_ID")
     p.add_argument("--materialize-selected", action="store_true", help="Materialize selected planner family/hybrid into downstream artifacts")
     p.add_argument("--build-report", action="store_true", help="Build report after the run")
     p.add_argument("--post-discord", action="store_true", help="Post report to Discord after the run")
@@ -194,7 +192,7 @@ def main() -> int:
 
         cmd = [
             python_bin,
-            "prose_research_run.py",
+            "scripts/orchestration/prose_research_run.py",
             "--orchestration-plan", str(run_plan),
             "--memory-path", args.memory_path,
             "--planner-model", args.planner_model,
@@ -202,10 +200,7 @@ def main() -> int:
             "--report-model", args.report_model,
             "--write", str(artifacts_dir / "prose_research_run.latest.json"),
         ]
-        discord_channel_id = compact_ws(args.discord_channel_id)
-        if args.post_discord and not discord_channel_id:
-            discord_channel_id = DEFAULT_PROSE_RESEARCH_DISCORD_CHANNEL_ID
-
+        discord_channel_id = compact_ws(args.discord_channel_id) or compact_ws(os.environ.get("PROSE_RESEARCH_DISCORD_CHANNEL_ID", ""))
         if discord_channel_id:
             cmd.extend(["--discord-channel-id", discord_channel_id])
         if auto_materialize:

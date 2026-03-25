@@ -261,7 +261,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--ranked-input", default="", help="Optional ranked_records JSON")
     p.add_argument("--resolved-input", default="", help="Optional resolved_records JSON")
     p.add_argument("--extracted-input", default="", help="Optional extracted_records JSON")
-    p.add_argument("--evidence-input", required=True, help="Evidence records JSON from prose_evidence_extract.py")
+    p.add_argument("--evidence-input", required=True, help="Evidence records JSON from scripts/pipeline/prose_evidence_extract.py")
     p.add_argument("--run-id", default="", help="Optional run identifier for artifact metadata.")
     p.add_argument("--lane", default="", help="Optional lane name, for example core_evidence or frontier.")
     p.add_argument("--orchestration-plan", default="", help="Optional path to orchestration_plan.json for context metadata.")

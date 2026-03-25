@@ -169,7 +169,7 @@ def main() -> int:
 
     digest_cmd = [
         python_bin,
-        "prose_planner_candidate_digest.py",
+        "scripts/planner/prose_planner_candidate_digest.py",
         "--input", str(ranked_input),
         "--records-key", "kept_records",
         "--top-k", "12",
@@ -180,7 +180,7 @@ def main() -> int:
 
     runtime_cmd = [
         python_bin,
-        "prose_planner_runtime_input.py",
+        "scripts/planner/prose_planner_runtime_input.py",
         "--controller-input", str(args.controller_input),
         "--coverage-input", str(args.coverage_input),
         "--orchestration-plan", str(inferred_plan_path),
@@ -190,7 +190,7 @@ def main() -> int:
 
     planner_cmd = [
         python_bin,
-        "prose_planner_agent.py",
+        "scripts/planner/prose_planner_agent.py",
         "--runtime-input", str(runtime_output),
         "--model", str(args.planner_model),
         "--model-alias", str(args.planner_alias),
@@ -203,7 +203,7 @@ def main() -> int:
 
     family_eval_cmd = [
         python_bin,
-        "prose_planner_family_eval.py",
+        "scripts/planner/prose_planner_family_eval.py",
         "--planner-bundle", str(planner_patch_to_eval),
         "--baseline-retrieval-input", str(retrieval_input),
         "--baseline-ranked-input", str(ranked_input),

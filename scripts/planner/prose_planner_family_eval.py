@@ -274,7 +274,7 @@ def hybrid_merge(eval_payloads: list[dict[str, Any]], per_family_quota: int, pri
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Evaluate multi-family planner query bundles by reusing single-family shadow eval and comparing single-family vs hybrid strategies.")
-    p.add_argument("--planner-bundle", required=True, help="Planner bundle JSON from prose_planner_agent.py")
+    p.add_argument("--planner-bundle", required=True, help="Planner bundle JSON from scripts/planner/prose_planner_agent.py")
     p.add_argument("--baseline-retrieval-input", required=True)
     p.add_argument("--baseline-ranked-input", required=True)
     p.add_argument("--baseline-resolved-input", required=True)
@@ -359,7 +359,7 @@ def main() -> int:
 
         cmd = [
             python_bin,
-            "prose_planner_shadow_eval.py",
+            "scripts/planner/prose_planner_shadow_eval.py",
             "--planner-patch", str(patch_path),
             "--baseline-retrieval-input", args.baseline_retrieval_input,
             "--baseline-ranked-input", args.baseline_ranked_input,

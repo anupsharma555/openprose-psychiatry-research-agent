@@ -46,10 +46,6 @@ The canonical implementation files live under:
 Operational rule:
 - treat `scripts/*` as the source of truth for code organization and future edits
 
-Compatibility note:
-- in the current VPS/workspace, root-level `prose_*.py` entrypoints may remain available for older commands and operational continuity
-- those root-level entrypoints are compatibility shims, not the preferred organization model
-
 Sub-agent contracts and schemas live under:
 
 - `.prose/templates/subagents/`
@@ -78,11 +74,11 @@ Use top-level orchestration rather than low-level scripts one by one.
 
 Preferred user-topic launcher:
 
-- `prose_research_start.py --topic "<user topic>" --execute --materialize-selected --build-report`
+- `scripts/orchestration/prose_research_start.py --topic "<user topic>" --execute --materialize-selected --build-report`
 
 If Discord delivery is requested:
 
-- `prose_research_start.py --topic "<user topic>" --execute --materialize-selected --build-report --post-discord --discord-channel-id <channel_id>`
+- `scripts/orchestration/prose_research_start.py --topic "<user topic>" --execute --materialize-selected --build-report --post-discord --discord-channel-id <channel_id>`
 
 The launcher should remain thin.
 It should not hardcode search logic.
@@ -111,20 +107,20 @@ The current end-to-end flow is:
 
 Primary deterministic data-plane scripts:
 
-- `prose_pubmed_search_worker.py`
-- `prose_pubmed_normalize_rank.py`
-- `prose_pubmed_fulltext_resolver.py`
-- `prose_pubmed_fulltext_extract.py`
-- `prose_extracted_backfill.py`
-- `prose_resolved_reclassify.py`
-- `prose_evidence_extract.py`
-- `prose_evidence_prepare.py`
-- `prose_evidence_label_normalize.py`
-- `prose_coverage_review.py`
-- `prose_controller.py`
-- `prose_retry_runner.py`
-- `prose_run_memory.py`
-- `prose_run_finalizer.py`
+- `scripts/pipeline/prose_pubmed_search_worker.py`
+- `scripts/pipeline/prose_pubmed_normalize_rank.py`
+- `scripts/pipeline/prose_pubmed_fulltext_resolver.py`
+- `scripts/pipeline/prose_pubmed_fulltext_extract.py`
+- `scripts/pipeline/prose_extracted_backfill.py`
+- `scripts/pipeline/prose_resolved_reclassify.py`
+- `scripts/pipeline/prose_evidence_extract.py`
+- `scripts/pipeline/prose_evidence_prepare.py`
+- `scripts/pipeline/prose_evidence_label_normalize.py`
+- `scripts/pipeline/prose_coverage_review.py`
+- `scripts/orchestration/prose_controller.py`
+- `scripts/orchestration/prose_retry_runner.py`
+- `scripts/orchestration/prose_run_memory.py`
+- `scripts/orchestration/prose_run_finalizer.py`
 
 These remain the deterministic backbone.
 Advisory sub-agents may guide the pipeline, but should not silently replace the deterministic backbone.
@@ -138,12 +134,12 @@ Role:
 - stay focused on retrieval and query improvement only
 
 Key scripts:
-- `prose_planner_candidate_digest.py`
-- `prose_planner_runtime_input.py`
-- `prose_planner_agent.py`
-- `prose_planner_shadow_eval.py`
-- `prose_planner_family_eval.py`
-- `prose_planner_wrapper.py`
+- `scripts/planner/prose_planner_candidate_digest.py`
+- `scripts/planner/prose_planner_runtime_input.py`
+- `scripts/planner/prose_planner_agent.py`
+- `scripts/planner/prose_planner_shadow_eval.py`
+- `scripts/planner/prose_planner_family_eval.py`
+- `scripts/planner/prose_planner_wrapper.py`
 
 Planner policy:
 - operates in **shadow mode**
@@ -162,12 +158,12 @@ Role:
   - exclude
 
 Key scripts:
-- `prose_evidence_router_runtime_input.py`
-- `prose_evidence_router_agent.py`
-- `prose_evidence_router_compare.py`
-- `prose_evidence_router_memory_writeback.py`
-- `prose_evidence_router_promote.py`
-- `prose_evidence_router_advisory.py`
+- `scripts/router/prose_evidence_router_runtime_input.py`
+- `scripts/router/prose_evidence_router_agent.py`
+- `scripts/router/prose_evidence_router_compare.py`
+- `scripts/router/prose_evidence_router_memory_writeback.py`
+- `scripts/router/prose_evidence_router_promote.py`
+- `scripts/router/prose_evidence_router_advisory.py`
 
 Router policy:
 - currently **advisory**, not authoritative
@@ -184,10 +180,10 @@ Role:
 - provide structured article-level enrichments for a second-pass report
 
 Key scripts:
-- `prose_report_critic_runtime_input.py`
-- `prose_report_critic_agent.py`
-- `prose_report_critic_promote.py`
-- `prose_report_critic_advisory.py`
+- `scripts/reporting/prose_report_critic_runtime_input.py`
+- `scripts/reporting/prose_report_critic_agent.py`
+- `scripts/reporting/prose_report_critic_promote.py`
+- `scripts/reporting/prose_report_critic_advisory.py`
 
 Critic policy:
 - currently **advisory**

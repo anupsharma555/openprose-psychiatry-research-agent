@@ -244,7 +244,7 @@ def update_memory(
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Persist future-run lessons from controller decisions into shared prose run memory.")
-    p.add_argument("--controller-input", required=True, help="controller_decision.json from prose_controller.py")
+    p.add_argument("--controller-input", required=True, help="controller_decision.json from scripts/orchestration/prose_controller.py")
     p.add_argument("--coverage-input", default="", help="Optional coverage_report.json for richer summary")
     p.add_argument("--evidence-input", default="", help="Optional evidence_records.json for richer summary")
     p.add_argument("--memory-path", default=".prose/memory/run_memory.json", help="Shared run memory JSON path")

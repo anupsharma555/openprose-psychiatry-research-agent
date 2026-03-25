@@ -965,7 +965,7 @@ def build_semantic_feedback(evidence_records: list[dict[str, Any]], partial_reco
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Classify extracted prose records and produce evidence-ready objects.")
-    p.add_argument("--input", required=True, help="Input JSON from prose_pubmed_fulltext_extract.py, or - for stdin")
+    p.add_argument("--input", required=True, help="Input JSON from scripts/pipeline/prose_pubmed_fulltext_extract.py, or - for stdin")
     p.add_argument("--records-key", default="extracted_records", help="List key to read from input JSON")
     p.add_argument("--top-k", type=int, default=0, help="Optional cap on number of records to process")
     p.add_argument("--run-id", default="", help="Optional run identifier for artifact metadata.")
