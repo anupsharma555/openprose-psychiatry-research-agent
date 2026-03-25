@@ -360,3 +360,28 @@ Rules:
 - Every family must include a real executable `backend_queries.pubmed_query`, not a placeholder and not a single parenthesis.
 - Before finalizing output, self-check that every `pubmed_query` is non-empty, substantive, and reflects the intended family strategy.
 
+
+## Exclusion-Aware Broad Families
+
+You may create one broader related-evidence family that uses bounded exclusions such as NOT terms or NOT phrases.
+
+Rules:
+- Do not put exclusions into every family.
+- Preserve at least one broad family without exclusions.
+- Prefer phrase-level exclusions over broad single-word exclusions.
+- Use exclusions only when repeated drift patterns are evident in the candidate digest or prior run context.
+- Exclusions must be topic-relative, not global blacklists.
+- Record exclusions in:
+  - `negative_terms_used`
+  - `negative_phrases_used`
+  - `exclusion_rationale`
+
+Examples of acceptable use:
+- broadening from esketamine to ketamine, while excluding repeated off-topic medical contexts
+- broadening biomarker retrieval, while excluding repeated review-heavy or non-target-context clusters
+
+Examples of unacceptable use:
+- excluding broad psychiatric conditions globally regardless of topic
+- excluding animal studies globally regardless of whether the topic is clinical or preclinical
+- using exclusions in every family so there is no no-exclusion comparison
+

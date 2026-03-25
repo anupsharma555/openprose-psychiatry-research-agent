@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "template": true,
+  "artifact_type": "report_critic_shadow",
+  "stage": "report_critic",
+  "mode": "shadow",
+  "run_id": null,
+  "topic": null,
+  "generated_at": null,
+  "article_critiques": [
+    {
+      "source_record_key": null,
+      "title": null,
+      "current_bucket": null,
+      "issue_types": [],
+      "confidence": null,
+      "rationale": null,
+      "evidence_support": [],
+      "critic_emphasis_points": [],
+      "suggested_bullets": [],
+      "suggested_factual_paragraph": null,
+      "suggested_label_overrides": {
+        "paper_kind": null,
+        "document_role": null
+      },
+      "suggested_bucket": null,
+      "needs_human_review": null
+    }
+  ],
+  "summary": {
+    "critiqued_article_count": 0,
+    "articles_with_changes": 0,
+    "high_confidence_changes": 0
+  }
+}

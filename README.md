@@ -4,78 +4,179 @@ Author: Anup Sharma, MD PhD
 
 ## Overview
 
-OpenProse Psychiatry Research Agent v1.1 is a custom research-retrieval workflow for psychiatry, neuroscience, artificial intelligence in medicine, and digital health. The system combines a deterministic literature pipeline with an LLM-guided planner sub-agent that proposes alternative query families for evaluation.
+OpenProse Psychiatry Research Agent v1.1 is a custom research-retrieval and report-generation workflow for psychiatry, neuroscience, artificial intelligence in medicine, and digital health. The repository combines a deterministic literature pipeline with bounded advisory sub-agents that expand query generation, evidence routing, and report refinement without giving model outputs direct control over the active run.
 
-The primary design objective is to improve research retrieval quality for psychiatric research use cases while maintaining deterministic control over how model-generated suggestions are incorporated into an active run.
-
-OpenProse provides the orchestration and planner-contract framework for the workflow. OpenClaw provides the chat-facing interface for query initiation, scheduled execution, and report delivery.
+The project is organized around OpenProse as the orchestration and sub-agent contract layer, and OpenClaw as the chat-facing execution and delivery layer. The current architecture is designed to improve retrieval quality, preserve inspectable intermediate artifacts, and support progressive incorporation of advisory model outputs into a clinically oriented research workflow.
 
 ## Core Capabilities
 
-- deterministic baseline retrieval, ranking, full-text resolution, extraction, and evidence generation
+- deterministic baseline retrieval, ranking, full-text resolution, extraction, and evidence preparation
 - planner sub-agent generation of multiple competing query families
-- bounded shadow evaluation of planner proposals before any selected change is materialized
-- controller-based stop or retry decisions with reusable future-run patch candidates
-- hybrid materialization of selected query families into downstream evidence artifacts
-- structured report generation with optional OpenClaw delivery to chat interfaces such as Discord
+- family-level evaluation and selection of direct or broader related retrieval strategies
+- deterministic portfolio routing of evidence into report lanes
+- advisory evidence-router sub-agent for routing comparison and promotion
+- deterministic report-input enrichment before narrative generation
+- advisory report-critic sub-agent for structured report refinement
+- optional OpenClaw delivery of reports to chat interfaces such as Discord
 - support for scheduled multi-query search workflows through OpenClaw cron jobs
 
-## Design Principles
+## Architecture
 
-- deterministic execution before model-guided adaptation
-- bounded sub-agent scope rather than unconstrained workflow mutation
-- explicit controller decisions for stop, retry, or future-run learning
-- artifact-based workflow state so each stage produces inspectable intermediate outputs
-- retrieval diversification through competing query families rather than a single static search
+The repository is now physically organized under `scripts/*`, with each directory representing a distinct functional layer.
 
-## System Architecture
+### `scripts/orchestration/`
 
-The workflow is organized around three cooperating layers.
+This layer coordinates run creation, retries, controller decisions, materialization, memory persistence, and finalization.
 
-### Main Research Agent
+Primary files:
 
-The main prose-research agent is responsible for run creation, deterministic literature processing, retry execution, run finalization, and report production.
+- `prose_research_start.py`
+- `prose_research_run.py`
+- `prose_controller.py`
+- `prose_retry_runner.py`
+- `prose_run_memory.py`
+- `prose_run_finalizer.py`
+- `prose_materialize_family.py`
+- `prose_hybrid_materialize.py`
 
-### Planner Sub-Agent
+### `scripts/pipeline/`
 
-The planner sub-agent analyzes the current topic, coverage profile, controller state, and run memory to generate multiple competing retrieval strategies. These strategies are expressed as bounded query-family proposals rather than direct modifications to the active run.
+This layer contains the deterministic retrieval and evidence-processing pipeline.
 
-### Controller and Evaluation Layer
+Primary files:
 
-All planner proposals are evaluated through deterministic shadow branches. The system can reject all proposals, select a single family, or construct a hybrid family merge, and only selected strategies are materialized downstream.
+- `prose_pubmed_search_worker.py`
+- `prose_pubmed_normalize_rank.py`
+- `prose_pubmed_fulltext_resolver.py`
+- `prose_pubmed_fulltext_extract.py`
+- `prose_resolved_reclassify.py`
+- `prose_extracted_backfill.py`
+- `prose_evidence_extract.py`
+- `prose_evidence_prepare.py`
+- `prose_evidence_label_normalize.py`
+- `prose_coverage_review.py`
 
-## Retrieval Model
+### `scripts/planner/`
 
-The repository is designed to supplement psychiatric research retrieval by allowing an agent and a planner sub-agent to generate, compare, and evaluate competing search strategies for research report generation. This avoids reliance on a single static query and supports broader but controlled evidence discovery.
+This layer contains the query-planning sub-agent and the family-level evaluation path.
+
+Primary files:
+
+- `prose_planner_candidate_digest.py`
+- `prose_planner_runtime_input.py`
+- `prose_planner_agent.py`
+- `prose_planner_shadow_eval.py`
+- `prose_planner_family_eval.py`
+- `prose_planner_wrapper.py`
+
+### `scripts/router/`
+
+This layer contains the advisory evidence-router sub-agent, which compares model-guided routing against deterministic routing and can propose promotions into the report portfolio.
+
+Primary files:
+
+- `prose_evidence_router_runtime_input.py`
+- `prose_evidence_router_agent.py`
+- `prose_evidence_router_compare.py`
+- `prose_evidence_router_memory_writeback.py`
+- `prose_evidence_router_promote.py`
+- `prose_evidence_router_advisory.py`
+
+### `scripts/reporting/`
+
+This layer contains deterministic report assembly, portfolio report preparation, narrative generation, report-critic advisory logic, and delivery.
+
+Primary files:
+
+- `prose_run_report.py`
+- `prose_run_report_input.py`
+- `prose_report_input_enrich.py`
+- `prose_portfolio_report_input.py`
+- `prose_run_report_ai.py`
+- `prose_post_discord.py`
+- `prose_report_critic_runtime_input.py`
+- `prose_report_critic_agent.py`
+- `prose_report_critic_promote.py`
+- `prose_report_critic_advisory.py`
+
+### `scripts/diagnostics/`
+
+This layer contains targeted diagnostics for weak HTML and publisher-access failure modes.
+
+Primary files:
+
+- `prose_html_audit.py`
+- `prose_html_probe.py`
+
+## Compatibility Model
+
+The implementation files now live under `scripts/*`. For compatibility with earlier commands and automation, root-level `prose_*.py` entries are retained as lightweight symlink shims that point to the new script locations.
+
+This allows:
+
+- newer documentation to describe the real directory structure
+- existing command invocations to continue functioning
+- later migration to a stricter package or module-based invocation model
+
+## Active Sub-Agents
+
+The current advisory sub-agent lineup includes three specialized roles.
+
+### `planner_agent`
+
+Purpose:
+
+- generate topic alternatives
+- generate multiple competing query families
+- support broader retrieval diversification while preserving bounded output structure
+
+### `evidence_router`
+
+Purpose:
+
+- partition selected evidence into direct, related broader, review/context, or excluded categories
+- compare advisory routing against the deterministic baseline
+- write routing lessons back into memory
+- optionally promote additional evidence into the reporting portfolio
+
+### `report_critic`
+
+Purpose:
+
+- critique report output after initial generation
+- propose structured article-level and section-level improvements
+- support a promoted second-pass report build without becoming the sole report authority
+
+## Retrieval and Selection Model
+
+The workflow does not rely on a single static search strategy. The deterministic baseline retrieval path establishes the initial reference set for a topic. The planner sub-agent then generates multiple competing query families, which are evaluated in bounded shadow branches.
+
+The active planner evaluation path is centered on:
+
+- `scripts/planner/prose_planner_wrapper.py`
+- `scripts/planner/prose_planner_family_eval.py`
+
+`prose_planner_shadow_eval.py` remains part of the lower-level branch evaluation path, but the principal selection logic now operates at the family level. The system can reject all planner proposals, select a single family, or construct a hybrid family merge, and only selected strategies are materialized downstream.
 
 ## End-to-End Workflow
 
-1. Create a run and generate an orchestration plan.
-2. Execute baseline PubMed retrieval and ranking.
-3. Resolve accessible full text and extract structured content.
-4. Convert extracted content into evidence records and review coverage.
-5. Use the controller to determine whether the run should stop or retry.
-6. Generate planner runtime input and candidate query families.
-7. Evaluate each candidate family in a deterministic shadow branch.
-8. Select a single family, build a hybrid merge, or reject all planner proposals.
-9. Materialize the selected strategy into downstream evidence artifacts when appropriate.
-10. Generate report outputs and optionally deliver them through OpenClaw.
+The integrated report path currently follows this sequence:
 
-## How Query Competition Works
+1. baseline retrieval and deterministic evidence pipeline
+2. planner family generation and family-level evaluation
+3. selection of best overall family plus best direct and related families
+4. deterministic portfolio routing
+5. evidence-router advisory pass
+6. deterministic report-input enrichment
+7. first-pass report generation with `gpt-4o-mini`
+8. report-critic advisory pass with `gpt-5-mini`
+9. promoted report input
+10. second-pass report generation with `gpt-4o-mini`
+11. optional Discord posting through OpenClaw
 
-The baseline retrieval path establishes the reference set for a topic. After that baseline has been ranked, resolved, extracted, and reviewed, the planner sub-agent generates multiple candidate query families rather than a single replacement query.
+## Runtime Structure
 
-Each family is evaluated in its own shadow branch. The evaluation process measures the resulting candidate set against the baseline using branch-level metrics such as primary-study coverage, review pressure, tier-1 journal representation, and full-text yield. The system can then:
-
-- reject all planner candidates
-- promote a single family
-- construct a hybrid merge from multiple acceptable families
-
-This design allows the repository to use model assistance for retrieval diversification without giving the model direct control over the evidence pipeline.
-
-## Run Directory Model
-
-At runtime, each execution is organized under `.prose/runs/<run_id>/`. Although this directory is excluded from version control, it is central to understanding how the repository functions.
+At runtime, each execution is organized under `.prose/runs/<run_id>/`. Although these directories are excluded from version control, they are central to how the workflow operates.
 
 Typical run structure:
 
@@ -89,15 +190,7 @@ Typical run structure:
 └── program.prose
 ```
 
-The major runtime directories have distinct roles:
-
-- `bindings/`: orchestration inputs and run-scoped configuration
-- `artifacts/`: JSON and markdown outputs produced by each pipeline stage
-- `cache/`: reusable resolver and planner-support outputs
-- `fulltext/`: downloaded or resolved full-text material used for extraction
-- `program.prose`: run-specific snapshot of the OpenProse program
-
-This structure allows a run to be audited stage by stage and supports reproducibility, debugging, and post hoc review of retrieval decisions.
+The runtime model is artifact-driven. Stages emit inspectable JSON or markdown outputs covering retrieval records, ranking, resolved full text, extracted records, evidence portfolios, controller decisions, planner-family evaluation, advisory outputs, and report-delivery sidecars.
 
 ## Repository Layout
 
@@ -108,119 +201,46 @@ This structure allows a run to be audited stage by stage and supports reproducib
 │   │   └── prose_research.prose
 │   └── templates/
 │       └── subagents/
-├── prose_research_start.py
-├── prose_research_run.py
-├── prose_controller.py
-├── prose_retry_runner.py
-├── prose_run_finalizer.py
-├── prose_run_memory.py
-├── prose_pubmed_search_worker.py
-├── prose_pubmed_normalize_rank.py
-├── prose_pubmed_fulltext_resolver.py
-├── prose_pubmed_fulltext_extract.py
-├── prose_resolved_reclassify.py
-├── prose_extracted_backfill.py
-├── prose_evidence_extract.py
-├── prose_coverage_review.py
-├── prose_planner_candidate_digest.py
-├── prose_planner_runtime_input.py
-├── prose_planner_agent.py
-├── prose_planner_shadow_eval.py
-├── prose_planner_family_eval.py
-├── prose_planner_wrapper.py
-├── prose_hybrid_materialize.py
-├── prose_run_report_input.py
-├── prose_run_report_ai.py
-└── prose_post_discord.py
+├── scripts/
+│   ├── orchestration/
+│   ├── pipeline/
+│   ├── planner/
+│   ├── router/
+│   ├── reporting/
+│   └── diagnostics/
+├── prose_*.py
+├── README.md
+├── DEPENDENCIES.md
+├── requirements.txt
+└── .env.example
 ```
-
-## Key Components
-
-### Orchestration
-
-- `prose_research_start.py`: creates a run, snapshots the OpenProse program, and writes the orchestration plan
-- `prose_research_run.py`: orchestrates baseline execution, retry handling, planner flow, materialization, report generation, and optional delivery
-
-### Deterministic Literature Pipeline
-
-- `prose_pubmed_search_worker.py`: PubMed retrieval
-- `prose_pubmed_normalize_rank.py`: ranking and normalization
-- `prose_pubmed_fulltext_resolver.py`: full-text resolution across PMC, publisher, and open-access routes
-- `prose_pubmed_fulltext_extract.py`: structural extraction from resolved content
-- `prose_html_audit.py`: inspection of weak or low-substance HTML outputs
-- `prose_html_probe.py`: targeted HTML diagnostics for resolver and extraction review
-- `prose_resolved_reclassify.py`: reclassification of weak full-text signals
-- `prose_extracted_backfill.py`: abstract and metadata backfill
-- `prose_evidence_extract.py`: evidence object construction
-- `prose_coverage_review.py`: coverage quality assessment
-- `prose_controller.py`: bounded retry or stop decisions
-- `prose_retry_runner.py`: retry execution
-- `prose_run_finalizer.py`: stop-path finalization
-- `prose_run_memory.py`: future-run memory persistence
-
-### Planner and Query-Family Evaluation
-
-- `prose_planner_candidate_digest.py`: compressed candidate context for the planner
-- `prose_planner_runtime_input.py`: planner runtime state assembly from topic, controller, coverage, and memory
-- `prose_planner_agent.py`: LLM-based planner sub-agent for competing query-family generation
-- `prose_planner_wrapper.py`: primary planner entrypoint coordinating digest creation, runtime-input generation, planner execution, and family evaluation
-- `prose_planner_family_eval.py`: primary family-level evaluation, selection, and hybrid merge logic for the active planner flow
-- `prose_planner_shadow_eval.py`: lower-level deterministic evaluation of a single planner branch used within the broader family-evaluation path
-
-### Runtime Outputs
-
-The repository is designed around stage-specific artifacts rather than opaque in-memory execution. In practice, this means the workflow can emit:
-
-- retrieval records
-- ranked records
-- resolved records
-- extracted records
-- evidence records
-- coverage reports
-- controller decisions
-- planner candidate digests
-- planner runtime inputs
-- planner query bundles and shadow-evaluation outputs
-- report inputs, markdown reports, and delivery sidecars
-
-This artifact model makes it possible to inspect the exact transition from search results to report-ready evidence.
-
-### Materialization and Reporting
-
-- `prose_hybrid_materialize.py`: selected-family or hybrid materialization into downstream evidence artifacts
-- `prose_run_report_input.py`: structured report-input assembly
-- `prose_run_report_ai.py`: markdown report and digest generation
-- `prose_post_discord.py`: OpenClaw-based delivery workflow
 
 ## OpenProse Integration
 
-OpenProse provides the orchestration and planner-contract layer for the project. The repository includes:
+OpenProse provides the orchestration and sub-agent contract layer for the repository. The project includes planner, evidence-router, and report-critic sub-agent templates under `.prose/templates/subagents/`, including:
 
-- `.prose/programs/prose_research.prose`
-- `.prose/templates/subagents/planner_subagent.contract.md`
-- `.prose/templates/subagents/planner_runtime_input.template.json`
-- `.prose/templates/subagents/planner_query_bundle.template.json`
-- `.prose/templates/subagents/planner_query_bundle.schema.json`
-- `.prose/templates/subagents/planner_query_bundle.acceptance_spec.json`
+- planner templates and schemas
+- evidence-router runtime and output templates
+- report-critic runtime, contract, and output templates
 
-The active data-plane execution remains in deterministic Python scripts.
+The Python scripts implement the executable data plane, while OpenProse structures the contracts and bounded advisory interfaces.
 
 ## OpenClaw Integration
 
-OpenClaw serves as the chat and delivery interface for the workflow. It can be used to:
+OpenClaw serves as the chat-facing and delivery layer. In this workflow it can be used to:
 
-- initiate or frame research queries from a chat surface
-- return finished digests and report artifacts to the user
-- deliver reports into chat interfaces such as Discord
-- automate recurring multi-query search workflows through OpenClaw cron jobs
+- initiate or frame research queries from chat
+- support scheduled multi-query search workflows through cron jobs
+- deliver reports and digests into interfaces such as Discord
+- support iterative human review of advisory outputs
 
 ## Requirements
 
 - Python 3.10+, tested on Python 3.12
 - `openai` Python package
 - network access for PubMed, PMC, publisher endpoints, and model APIs
-- a PubMed / NCBI API key for continued operational use of the retrieval pipeline
-- an OpenAI API key for planner and report-generation requests
+- a PubMed / NCBI API key for operational use of the retrieval pipeline
+- an OpenAI API key for planner, evidence-router, report-critic, and report-generation requests
 - optional `openclaw` installation for chat delivery workflows
 
 ## Configuration
@@ -271,13 +291,9 @@ python3 prose_research_start.py \
   --discord-channel-id prose-research
 ```
 
-## Version
-
-This repository documents version 1.1 of the workflow.
-
 ## Repository Hygiene
 
-The repository is structured to include reusable source code and stable templates while excluding runtime artifacts and environment-specific files.
+The repository is structured to include reusable source code, compatibility shims, and stable sub-agent templates while excluding runtime artifacts and environment-specific files.
 
 No API keys or runtime credentials are stored in the repository. Required secrets, including OpenAI and PubMed / NCBI credentials, must be provided through the runtime environment.
 

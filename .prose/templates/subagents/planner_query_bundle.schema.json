@@ -516,6 +516,24 @@
               "string",
               "null"
             ]
+          },
+          "negative_terms_used": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "negative_phrases_used": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exclusion_rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -533,7 +551,10 @@
           "dropped_must_have_concepts",
           "optional_concepts_used",
           "broadening_concepts_used",
-          "concept_coverage_note"
+          "concept_coverage_note",
+          "negative_terms_used",
+          "negative_phrases_used",
+          "exclusion_rationale"
         ]
       }
     },
@@ -568,6 +589,9 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 4
+        },
+        "allow_exclusion_aware_broad_families": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -577,7 +601,8 @@
         "require_distinct_family_strategies",
         "allow_multiple_topic_alternatives",
         "topic_alternative_count_target",
-        "max_families_to_eval"
+        "max_families_to_eval",
+        "allow_exclusion_aware_broad_families"
       ]
     },
     "evaluation_plan": {

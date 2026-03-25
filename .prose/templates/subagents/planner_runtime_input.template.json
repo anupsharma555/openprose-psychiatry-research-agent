@@ -112,7 +112,9 @@
     "topic_alternative_count_target": [
       2,
       3
-    ]
+    ],
+    "allow_exclusion_aware_broad_families": true,
+    "preserve_one_broad_family_without_exclusions": true
   },
   "query_rules": {
     "use_concept_groups": true,

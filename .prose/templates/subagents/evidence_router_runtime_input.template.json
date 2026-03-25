@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "template": true,
+  "artifact_type": "evidence_router_runtime_input",
+  "stage": "evidence_router_runtime_input",
+  "run_id": null,
+  "topic": null,
+  "topic_tokens": [],
+  "topic_concepts": {
+    "intervention": [],
+    "condition": [],
+    "optional_qualifiers": [],
+    "exclusion_or_noise_terms": []
+  },
+  "concept_policy": {},
+  "candidate_records": [],
+  "bucket_definitions": {
+    "direct_evidence": "Highly topic-faithful, usually primary empirical, strongest answer-bearing evidence.",
+    "related_broader_evidence": "Relevant and supportive, but broader in intervention, condition framing, or mechanism.",
+    "review_context_evidence": "Review-like or field-framing papers useful for context.",
+    "exclude": "Too far off-topic or not worth including."
+  }
+}

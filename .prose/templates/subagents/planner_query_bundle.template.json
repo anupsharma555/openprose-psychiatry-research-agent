@@ -87,7 +87,10 @@
       "dropped_must_have_concepts": [],
       "optional_concepts_used": [],
       "broadening_concepts_used": [],
-      "concept_coverage_note": null
+      "concept_coverage_note": null,
+      "negative_terms_used": [],
+      "negative_phrases_used": [],
+      "exclusion_rationale": null
     }
   ],
   "selection_intent": {
@@ -100,7 +103,8 @@
       2,
       3
     ],
-    "max_families_to_eval": 4
+    "max_families_to_eval": 4,
+    "allow_exclusion_aware_broad_families": true
   },
   "evaluation_plan": {
     "branch_type": "cheap_eval",

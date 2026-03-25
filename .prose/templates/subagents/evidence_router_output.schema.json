@@ -1,0 +1,87 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string" },
+    "template": { "type": ["boolean", "null"] },
+    "artifact_type": { "type": "string", "enum": ["evidence_router_shadow"] },
+    "stage": { "type": "string", "enum": ["evidence_router"] },
+    "mode": { "type": "string", "enum": ["shadow"] },
+    "run_id": { "type": ["string", "null"] },
+    "topic": { "type": ["string", "null"] },
+    "generated_at": { "type": ["string", "null"] },
+    "routed_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source_record_key": { "type": ["string", "null"] },
+          "pmid": { "type": ["string", "null"] },
+          "doi": { "type": ["string", "null"] },
+          "title": { "type": ["string", "null"] },
+          "suggested_bucket": {
+            "type": "string",
+            "enum": [
+              "direct_evidence",
+              "related_broader_evidence",
+              "review_context_evidence",
+              "exclude"
+            ]
+          },
+          "bucket_confidence": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "rationale": { "type": ["string", "null"] },
+          "evidence_support": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "needs_human_review": { "type": ["boolean", "null"] }
+        },
+        "required": [
+          "source_record_key",
+          "pmid",
+          "doi",
+          "title",
+          "suggested_bucket",
+          "bucket_confidence",
+          "rationale",
+          "evidence_support",
+          "needs_human_review"
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "direct_count": { "type": "integer" },
+        "related_count": { "type": "integer" },
+        "review_count": { "type": "integer" },
+        "exclude_count": { "type": "integer" },
+        "high_confidence_count": { "type": "integer" }
+      },
+      "required": [
+        "direct_count",
+        "related_count",
+        "review_count",
+        "exclude_count",
+        "high_confidence_count"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "template",
+    "artifact_type",
+    "stage",
+    "mode",
+    "run_id",
+    "topic",
+    "generated_at",
+    "routed_records",
+    "summary"
+  ]
+}

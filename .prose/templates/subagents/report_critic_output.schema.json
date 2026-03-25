@@ -1,0 +1,109 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string" },
+    "template": { "type": ["boolean", "null"] },
+    "artifact_type": { "type": "string", "enum": ["report_critic_shadow"] },
+    "stage": { "type": "string", "enum": ["report_critic"] },
+    "mode": { "type": "string", "enum": ["shadow"] },
+    "run_id": { "type": ["string", "null"] },
+    "topic": { "type": ["string", "null"] },
+    "generated_at": { "type": ["string", "null"] },
+    "article_critiques": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source_record_key": { "type": ["string", "null"] },
+          "title": { "type": ["string", "null"] },
+          "current_bucket": { "type": ["string", "null"] },
+          "issue_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "missing_supported_bullets",
+                "suspected_label_error",
+                "lane_misplacement",
+                "weak_generic_summary",
+                "no_issue"
+              ]
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "rationale": { "type": ["string", "null"] },
+          "evidence_support": { "type": "array", "items": { "type": "string" } },
+          "critic_emphasis_points": { "type": "array", "items": { "type": "string" } },
+          "suggested_bullets": { "type": "array", "items": { "type": "string" } },
+          "suggested_factual_paragraph": { "type": ["string", "null"] },
+          "suggested_label_overrides": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "paper_kind": { "type": ["string", "null"] },
+              "document_role": { "type": ["string", "null"] }
+            },
+            "required": ["paper_kind", "document_role"]
+          },
+          "suggested_bucket": {
+            "type": ["string", "null"],
+            "enum": [
+              "direct_evidence",
+              "related_broader_evidence",
+              "review_context_evidence",
+              "exclude",
+              null
+            ]
+          },
+          "needs_human_review": { "type": ["boolean", "null"] }
+        },
+        "required": [
+          "source_record_key",
+          "title",
+          "current_bucket",
+          "issue_types",
+          "confidence",
+          "rationale",
+          "evidence_support",
+          "critic_emphasis_points",
+          "suggested_bullets",
+          "suggested_factual_paragraph",
+          "suggested_label_overrides",
+          "suggested_bucket",
+          "needs_human_review"
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "critiqued_article_count": { "type": "integer" },
+        "articles_with_changes": { "type": "integer" },
+        "high_confidence_changes": { "type": "integer" }
+      },
+      "required": [
+        "critiqued_article_count",
+        "articles_with_changes",
+        "high_confidence_changes"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "template",
+    "artifact_type",
+    "stage",
+    "mode",
+    "run_id",
+    "topic",
+    "generated_at",
+    "article_critiques",
+    "summary"
+  ]
+}

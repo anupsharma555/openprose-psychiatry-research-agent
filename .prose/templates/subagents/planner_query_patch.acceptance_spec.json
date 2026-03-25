@@ -149,7 +149,7 @@
       "ranked_primary_candidate_count_delta >= evaluation_plan.success_metrics.target_deltas.primary_study_like_count",
       "fulltext_yield_rate_branch >= max(default_guardrails.min_fulltext_yield_rate, baseline_fulltext_yield_rate - default_guardrails.max_fulltext_yield_drop_from_baseline)",
       "review_pressure_branch <= baseline_review_pressure",
-      "tier1_count_branch >= baseline_tier1_count + default_guardrails.min_tier1_count_delta"
+      "tier1_count_branch >= max(0, baseline_tier1_count - default_guardrails.max_tier1_count_drop_from_baseline)"
     ],
     "save_for_future_run_memory_if": [
       "shadow_branch_is_promising_but_current_run_retry_budget_is_exhausted",
@@ -160,7 +160,7 @@
       "ranked_primary_candidate_count_delta < 1",
       "fulltext_yield_rate_branch < max(default_guardrails.min_fulltext_yield_rate, baseline_fulltext_yield_rate - default_guardrails.max_fulltext_yield_drop_from_baseline)",
       "review_pressure_branch > baseline_review_pressure",
-      "tier1_count_branch < baseline_tier1_count"
+      "tier1_count_branch < max(0, baseline_tier1_count - default_guardrails.max_tier1_count_drop_from_baseline)"
     ]
   },
   "controller_outcomes": [

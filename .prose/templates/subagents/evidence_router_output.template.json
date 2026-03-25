@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "template": true,
+  "artifact_type": "evidence_router_shadow",
+  "stage": "evidence_router",
+  "mode": "shadow",
+  "run_id": null,
+  "topic": null,
+  "generated_at": null,
+  "routed_records": [
+    {
+      "source_record_key": null,
+      "pmid": null,
+      "doi": null,
+      "title": null,
+      "suggested_bucket": null,
+      "bucket_confidence": null,
+      "rationale": null,
+      "evidence_support": [],
+      "needs_human_review": null
+    }
+  ],
+  "summary": {
+    "direct_count": 0,
+    "related_count": 0,
+    "review_count": 0,
+    "exclude_count": 0,
+    "high_confidence_count": 0
+  }
+}

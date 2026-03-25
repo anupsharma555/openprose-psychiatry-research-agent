@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "template": true,
+  "artifact_type": "report_critic_runtime_input",
+  "stage": "report_critic_runtime_input",
+  "run_id": null,
+  "topic": null,
+  "candidate_articles": [],
+  "report_markdown": null,
+  "digest_markdown": null
+}
