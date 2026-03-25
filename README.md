@@ -4,9 +4,9 @@ Author: Anup Sharma, MD PhD
 
 ## Overview
 
-OpenProse Psychiatry Research Agent v1.1 is a custom research-retrieval and report-generation workflow for psychiatry, neuroscience, artificial intelligence in medicine, and digital health. The repository combines a deterministic literature pipeline with bounded advisory sub-agents that expand query generation, evidence routing, and report refinement without giving model outputs direct control over the active run.
+OpenProse Psychiatry Research Agent v1.1 is a personalized research-retrieval and report-generation workflow for psychiatry, neuroscience, artificial intelligence in medicine, and digital health. It combines a deterministic literature pipeline with bounded advisory sub-agents that improve query generation, evidence routing, and report refinement without giving model outputs direct control of the active run.
 
-The project is organized around OpenProse as the orchestration and sub-agent contract layer, and OpenClaw as the chat-facing execution and delivery layer. The current architecture is designed to improve retrieval quality, preserve inspectable intermediate artifacts, and support progressive incorporation of advisory model outputs into a clinically oriented research workflow.
+OpenProse provides the orchestration and sub-agent contract layer. OpenClaw provides chat-facing execution, scheduling, and delivery. The architecture is designed to improve retrieval quality, preserve inspectable intermediate artifacts, and progressively incorporate advisory model outputs into a clinically oriented research workflow.
 
 ## Core Capabilities
 
@@ -22,13 +22,13 @@ The project is organized around OpenProse as the orchestration and sub-agent con
 
 ## Architecture
 
-The repository is now physically organized under `scripts/*`, with each directory representing a distinct functional layer.
+The repository is organized under `scripts/*`, with each directory representing a functional layer in the pipeline.
 
 ### `scripts/orchestration/`
 
-This layer coordinates run creation, retries, controller decisions, materialization, memory persistence, and finalization.
+Coordinates run creation, retries, controller decisions, materialization, memory persistence, and finalization.
 
-Primary files:
+Representative scripts:
 
 - `scripts/orchestration/prose_research_start.py`
 - `scripts/orchestration/prose_research_run.py`
@@ -41,9 +41,9 @@ Primary files:
 
 ### `scripts/pipeline/`
 
-This layer contains the deterministic retrieval and evidence-processing pipeline.
+Implements the deterministic retrieval and evidence-processing pipeline.
 
-Primary files:
+Representative scripts:
 
 - `scripts/pipeline/prose_pubmed_search_worker.py`
 - `scripts/pipeline/prose_pubmed_normalize_rank.py`
@@ -58,9 +58,9 @@ Primary files:
 
 ### `scripts/planner/`
 
-This layer contains the query-planning sub-agent and the family-level evaluation path.
+Implements the query-planning sub-agent and the family-level evaluation path.
 
-Primary files:
+Representative scripts:
 
 - `scripts/planner/prose_planner_candidate_digest.py`
 - `scripts/planner/prose_planner_runtime_input.py`
@@ -71,9 +71,9 @@ Primary files:
 
 ### `scripts/router/`
 
-This layer contains the advisory evidence-router sub-agent, which compares model-guided routing against deterministic routing and can propose promotions into the report portfolio.
+Implements the advisory evidence-router sub-agent, which compares model-guided routing against deterministic routing and can propose promotions into the report portfolio.
 
-Primary files:
+Representative scripts:
 
 - `scripts/router/prose_evidence_router_runtime_input.py`
 - `scripts/router/prose_evidence_router_agent.py`
@@ -84,9 +84,9 @@ Primary files:
 
 ### `scripts/reporting/`
 
-This layer contains deterministic report assembly, portfolio report preparation, narrative generation, report-critic advisory logic, and delivery.
+Implements deterministic report assembly, portfolio preparation, narrative generation, report-critic advisory logic, and delivery.
 
-Primary files:
+Representative scripts:
 
 - `scripts/reporting/prose_run_report.py`
 - `scripts/reporting/prose_run_report_input.py`
@@ -101,9 +101,9 @@ Primary files:
 
 ### `scripts/diagnostics/`
 
-This layer contains targeted diagnostics for weak HTML and publisher-access failure modes.
+Contains targeted diagnostics for weak HTML and publisher-access failure modes.
 
-Primary files:
+Representative scripts:
 
 - `scripts/diagnostics/prose_html_audit.py`
 - `scripts/diagnostics/prose_html_probe.py`
@@ -114,43 +114,30 @@ The current advisory sub-agent lineup includes three specialized roles.
 
 ### `planner_agent`
 
-Purpose:
-
-- generate topic alternatives
-- generate multiple competing query families
-- support broader retrieval diversification while preserving bounded output structure
+Generates topic alternatives and multiple competing query families while preserving bounded output structure.
 
 ### `evidence_router`
 
-Purpose:
-
-- partition selected evidence into direct, related broader, review/context, or excluded categories
-- compare advisory routing against the deterministic baseline
-- write routing lessons back into memory
-- optionally promote additional evidence into the reporting portfolio
+Partitions selected evidence into direct, related broader, review/context, or excluded categories; compares advisory routing against the deterministic baseline; writes routing lessons back into memory; and can promote additional evidence into the reporting portfolio.
 
 ### `report_critic`
 
-Purpose:
-
-- critique report output after initial generation
-- propose structured article-level and section-level improvements
-- support a promoted second-pass report build without becoming the sole report authority
+Critiques report output after initial generation, proposes structured article-level and section-level improvements, and supports a promoted second-pass report build without becoming the sole report authority.
 
 ## Retrieval and Selection Model
 
-The workflow does not rely on a single static search strategy. The deterministic baseline retrieval path establishes the initial reference set for a topic. The planner sub-agent then generates multiple competing query families, which are evaluated in bounded shadow branches.
+The workflow does not rely on a single static search strategy. The deterministic baseline establishes the initial reference set for a topic, after which the planner sub-agent generates multiple competing query families for bounded evaluation.
 
 The active planner evaluation path is centered on:
 
 - `scripts/planner/prose_planner_wrapper.py`
 - `scripts/planner/prose_planner_family_eval.py`
 
-`scripts/planner/prose_planner_shadow_eval.py` remains part of the lower-level branch evaluation path, but the principal selection logic now operates at the family level. The system can reject all planner proposals, select a single family, or construct a hybrid family merge, and only selected strategies are materialized downstream.
+`scripts/planner/prose_planner_shadow_eval.py` remains part of the lower-level branch evaluation path, but the principal selection logic now operates at the family level. The system can reject all planner proposals, select a single family, or construct a hybrid family merge. Only selected strategies are materialized downstream.
 
 ## End-to-End Workflow
 
-The integrated report path currently follows this sequence:
+The integrated report path follows this sequence:
 
 1. baseline retrieval and deterministic evidence pipeline
 2. planner family generation and family-level evaluation
@@ -180,7 +167,7 @@ Typical run structure:
 └── program.prose
 ```
 
-The runtime model is artifact-driven. Stages emit inspectable JSON or markdown outputs covering retrieval records, ranking, resolved full text, extracted records, evidence portfolios, controller decisions, planner-family evaluation, advisory outputs, and report-delivery sidecars.
+The runtime model is artifact-driven. Stages emit inspectable JSON or markdown outputs for retrieval records, ranking, resolved full text, extracted records, evidence portfolios, controller decisions, planner-family evaluation, advisory outputs, and report-delivery sidecars.
 
 ## Repository Layout
 
@@ -206,17 +193,17 @@ The runtime model is artifact-driven. Stages emit inspectable JSON or markdown o
 
 ## OpenProse Integration
 
-OpenProse provides the orchestration and sub-agent contract layer for the repository. The project includes planner, evidence-router, and report-critic sub-agent templates under `.prose/templates/subagents/`, including:
+OpenProse provides the orchestration and sub-agent contract layer for the repository. The project includes planner, evidence-router, and report-critic templates under `.prose/templates/subagents/`, including:
 
 - planner templates and schemas
 - evidence-router runtime and output templates
 - report-critic runtime, contract, and output templates
 
-The Python scripts implement the executable data plane, while OpenProse structures the contracts and bounded advisory interfaces.
+The Python scripts implement the executable data plane, while OpenProse defines the contracts and bounded advisory interfaces.
 
 ## OpenClaw Integration
 
-OpenClaw serves as the chat-facing and delivery layer. In this workflow it can be used to:
+OpenClaw serves as the chat-facing execution and delivery layer. In this workflow it can be used to:
 
 - initiate or frame research queries from chat
 - support scheduled multi-query search workflows through cron jobs
